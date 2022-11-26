@@ -159,6 +159,7 @@ export interface BottomSheetProps
    * @default `adjustPan`
    */
   android_keyboardInputMode?: keyof typeof KEYBOARD_INPUT_MODE;
+  keyboardOffset?: number;
 
   //#endregion
 
