@@ -300,7 +300,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
 
       // extended position with keyboard =
       // container height - (sheet height + keyboard height in root container)
-      const keyboardHeightInContainer = animatedKeyboardHeightInContainer.value;
+      const keyboardHeightInContainer = animatedKeyboardHeightInContainer.value + keyboardOffset;
       const extendedPositionWithKeyboard = Math.max(
         0,
         animatedContainerHeight.value -
@@ -375,7 +375,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
     });
     // dynamic
     const animatedContentHeight = useDerivedValue(() => {
-      const keyboardHeightInContainer = animatedKeyboardHeightInContainer.value;
+      const keyboardHeightInContainer = animatedKeyboardHeightInContainer.value + keyboardOffset;
       const handleHeight = Math.max(0, animatedHandleHeight.value);
       let contentHeight = animatedSheetHeight.value - handleHeight;
 
@@ -438,6 +438,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
       animatedSheetHeight,
       isInTemporaryPosition,
       keyboardBehavior,
+      keyboardOffset
     ]);
     const animatedIndex = useDerivedValue(() => {
       const adjustedSnapPoints = animatedSnapPoints.value.slice().reverse();
