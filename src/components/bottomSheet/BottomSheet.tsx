@@ -1453,6 +1453,8 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
       }
     );
 
+    const gesDirection = useSharedValue(0)
+
     /**
      * React to internal variables to detect change in snap position.
      *
@@ -1469,16 +1471,36 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
         _animatedContentHeight: animatedContentHeight.value,
         _animatedHandleHeight: animatedHandleHeight.value,
       }),
-      ({
-        _animatedIndex,
-        _animationState,
-        _contentGestureState,
-        _handleGestureState,
-        _animatedPosition,
-        _animatedContainerHeight,
-        _animatedContentHeight,
-        _animatedHandleHeight,
-      }) => {
+      (state, prevState) => {
+        const {
+          _animatedIndex,
+          _animationState,
+          _contentGestureState,
+          _handleGestureState,
+          _animatedPosition,
+          _animatedContainerHeight,
+          _animatedContentHeight,
+          _animatedHandleHeight,
+        } = state
+        const _prevAnimatedPosition = prevState?._animatedPosition
+        const _prevContentGestureState = prevState?._contentGestureState
+        const _prevHandlerGestureState = prevState?._handleGestureState
+        const direction = (_prevAnimatedPosition||_animatedPosition) - _animatedPosition
+
+
+        if (_contentGestureState == 4) {
+          gesDirection.value = direction
+        }
+
+        const topPos = _animatedContainerHeight - _animatedPosition
+        const bottomPos = topPos - _animatedContentHeight  + _animatedHandleHeight
+
+        if (bottomPos < animatedKeyboardHeight.value && ((gesDirection.value > 0 && _contentGestureState != 4 && _prevContentGestureState == 4)
+          || (_handleGestureState != 4 && _prevHandlerGestureState == 4))
+        ) {
+          runOnJS(Keyboard.dismiss)()
+        }
+
         /**
          * exit the method if animation state is not stopped.
          */
@@ -1540,10 +1562,6 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
             },
           });
           runOnJS(_providedOnClose)();
-        }
-
-        if (_animatedContainerHeight - _animatedPosition <= _animatedContentHeight + _animatedHandleHeight) {
-          runOnJS(Keyboard.dismiss)()
         }
       },
       [handleOnChange, _providedOnClose]
