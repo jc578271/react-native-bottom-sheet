@@ -1,5 +1,5 @@
 import React, { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo } from "react";
-import { Platform } from "react-native";
+import { Keyboard, Platform } from "react-native";
 import invariant from "invariant";
 import Animated, {
   cancelAnimation,
@@ -105,6 +105,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
       keyboardBehavior = DEFAULT_KEYBOARD_BEHAVIOR,
       keyboardBlurBehavior = DEFAULT_KEYBOARD_BLUR_BEHAVIOR,
       android_keyboardInputMode = DEFAULT_KEYBOARD_INPUT_MODE,
+      keyboardOffset = 0,
 
       // layout
       handleHeight: _providedHandleHeight,
@@ -544,7 +545,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
         ) {
           isInTemporaryPosition.value = true;
           const keyboardHeightInContainer =
-            animatedKeyboardHeightInContainer.value;
+            animatedKeyboardHeightInContainer.value + keyboardOffset;
           return Math.max(0, highestSnapPoint - keyboardHeightInContainer);
         }
 
@@ -566,6 +567,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
         isInTemporaryPosition,
         keyboardBehavior,
         keyboardBlurBehavior,
+        keyboardOffset
       ]
     );
     const handleOnChange = useCallback(
@@ -1450,20 +1452,6 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
       }
     );
 
-    // useAnimatedReaction(
-    //   () => ({
-    //     _animatedPosition: animatedPosition.value,
-    //     _keyboardState: animatedKeyboardState.value
-    //   }), result => {
-    //     const {_animatedPosition, _keyboardState} = result
-    //     console.log(_keyboardState, _animatedPosition);
-    //     if ((_keyboardState == KEYBOARD_STATE.HIDDEN
-    //       || _keyboardState == KEYBOARD_STATE.UNDETERMINED)) {
-    //       runOnJS(handleCollapse)()
-    //     }
-    //   }
-    // )
-
     /**
      * React to internal variables to detect change in snap position.
      *
@@ -1476,14 +1464,19 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
         _animationState: animatedAnimationState.value,
         _contentGestureState: animatedContentGestureState.value,
         _handleGestureState: animatedHandleGestureState.value,
-        _keyboardState: animatedKeyboardState.value
+        _animatedContainerHeight: animatedContainerHeight.value,
+        _animatedContentHeight: animatedContentHeight.value,
+        _animatedHandleHeight: animatedHandleHeight.value,
       }),
       ({
         _animatedIndex,
         _animationState,
         _contentGestureState,
         _handleGestureState,
-        _keyboardState
+        _animatedPosition,
+        _animatedContainerHeight,
+        _animatedContentHeight,
+        _animatedHandleHeight,
       }) => {
         /**
          * exit the method if animation state is not stopped.
@@ -1548,12 +1541,9 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
           runOnJS(_providedOnClose)();
         }
 
-
-        if ((_keyboardState == KEYBOARD_STATE.HIDDEN
-          || _keyboardState == KEYBOARD_STATE.UNDETERMINED)) {
-          runOnJS(handleCollapse)()
+        if (_animatedContainerHeight - _animatedPosition <= _animatedContentHeight + _animatedHandleHeight) {
+          runOnJS(Keyboard.dismiss)()
         }
-
       },
       [handleOnChange, _providedOnClose]
     );
