@@ -1453,10 +1453,6 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
       }
     );
 
-    // useAnimatedReaction(() => ({
-    //
-    // }))
-
     const gesDirection = useSharedValue(0)
 
     /**
@@ -1488,31 +1484,37 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
           _animatedHandleHeight,
           _animatedKeyboardState,
         } = state
-        const _prevAnimatedPosition = prevState?._animatedPosition
-        const _prevContentGestureState = prevState?._contentGestureState
-        const _prevHandlerGestureState = prevState?._handleGestureState
-        const direction = (_prevAnimatedPosition||_animatedPosition) - _animatedPosition
 
-        if (_contentGestureState == 4) {
-          gesDirection.value = direction
-        }
+        /**
+         * Fix keyboard does not dismiss on IOS
+         * */
+        if (Platform.OS == "ios" && _animatedKeyboardState == KEYBOARD_STATE.SHOWN) {
+          const _prevAnimatedPosition = prevState?._animatedPosition
+          const _prevContentGestureState = prevState?._contentGestureState
+          const _prevHandlerGestureState = prevState?._handleGestureState
+          const direction = (_prevAnimatedPosition||_animatedPosition) - _animatedPosition
 
-        const topPos = _animatedContainerHeight - _animatedPosition + _animatedHandleHeight
-        const bottomPos = topPos - _animatedContentHeight
-
-        if (bottomPos < animatedKeyboardHeight.value && ((gesDirection.value > 0 && _contentGestureState != 4 && _prevContentGestureState == 4)
-          || (_handleGestureState != 4 && _prevHandlerGestureState == 4))
-        ) {
-          if (topPos < 200) {
-            runOnJS(handleClose)()
-          } else {
-            runOnJS(Keyboard.dismiss)()
+          if (_contentGestureState == 4) {
+            gesDirection.value = direction
           }
-        }
 
-        if (_animatedKeyboardState == KEYBOARD_STATE.SHOWN && _contentGestureState != 4 && direction < 0) {
-          if (topPos < animatedKeyboardHeight.value) {
-            runOnJS(handleClose)()
+          const topPos = _animatedContainerHeight - _animatedPosition + _animatedHandleHeight
+          const bottomPos = topPos - _animatedContentHeight
+
+          if (bottomPos < animatedKeyboardHeight.value && ((gesDirection.value > 0 && _contentGestureState != 4 && _prevContentGestureState == 4)
+            || (_handleGestureState != 4 && _prevHandlerGestureState == 4))
+          ) {
+            if (topPos < 200) {
+              runOnJS(handleClose)()
+            } else {
+              runOnJS(Keyboard.dismiss)()
+            }
+          }
+
+          if (_contentGestureState != 4 && direction < 0) {
+            if (topPos < animatedKeyboardHeight.value) {
+              runOnJS(handleClose)()
+            }
           }
         }
 
