@@ -1454,6 +1454,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
     );
 
     const gesDirection = useSharedValue(0)
+    const gesKeyboardState = useSharedValue(0)
 
     /**
      * React to internal variables to detect change in snap position.
@@ -1491,29 +1492,34 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
         if (Platform.OS == "ios" && _animatedKeyboardState == KEYBOARD_STATE.SHOWN) {
           const _prevAnimatedPosition = prevState?._animatedPosition
           const _prevContentGestureState = prevState?._contentGestureState
-          const _prevHandlerGestureState = prevState?._handleGestureState
-          const direction = (_prevAnimatedPosition||_animatedPosition) - _animatedPosition
+          const direction = (_prevAnimatedPosition || _animatedPosition) - _animatedPosition
 
           if (_contentGestureState == 4) {
             gesDirection.value = direction
           }
 
-          const topPos = _animatedContainerHeight - _animatedPosition + _animatedHandleHeight
-          const bottomPos = topPos - _animatedContentHeight
+          const topPos = _animatedContainerHeight - _animatedPosition
+          const bottomPos = topPos - _animatedContentHeight - _animatedHandleHeight
+          const comparePos = bottomPos + animatedKeyboardHeight.value
 
-          if (bottomPos < animatedKeyboardHeight.value && ((gesDirection.value > 0 && _contentGestureState != 4 && _prevContentGestureState == 4)
-            || (_handleGestureState != 4 && _prevHandlerGestureState == 4))
-          ) {
-            if (topPos < 200) {
+          // handle keyboard when gesture content is scrollable
+          if (bottomPos < animatedKeyboardHeight.value
+            && gesDirection.value > 0
+            && _contentGestureState != 4
+            && _prevContentGestureState == 4) {
+            if (comparePos < 200) {
               runOnJS(handleClose)()
             } else {
               runOnJS(Keyboard.dismiss)()
             }
-          }
-
-          if (_contentGestureState != 4 && direction < 0) {
-            if (topPos < animatedKeyboardHeight.value) {
+            // handler keyboard when gesture content is a view
+          } else if (_contentGestureState != 4
+            && _handleGestureState != 4
+            && gesKeyboardState.value == 1) {
+            if (comparePos < 200) {
               runOnJS(handleClose)()
+            } else if (comparePos <= animatedKeyboardHeight.value + 10) {
+              runOnJS(Keyboard.dismiss)()
             }
           }
         }
@@ -1546,6 +1552,9 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
         if (!hasNoActiveGesture) {
           return;
         }
+
+        // set keyboard state after animation
+        gesKeyboardState.value = _animatedKeyboardState
 
         /**
          * if the index is not equal to the current index,
