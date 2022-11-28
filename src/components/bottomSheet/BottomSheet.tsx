@@ -1507,12 +1507,9 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
             && gesDirection.value > 0
             && _contentGestureState != 4
             && _prevContentGestureState == 4) {
-            if (comparePos < 200) {
-              runOnJS(handleClose)()
-            } else {
-              runOnJS(Keyboard.dismiss)()
-            }
-            // handler keyboard when gesture content is a view
+            runOnJS(Keyboard.dismiss)()
+
+          // handler keyboard when gesture content is a view
           } else if (_contentGestureState != 4
             && _handleGestureState != 4
             && gesKeyboardState.value == 1) {
