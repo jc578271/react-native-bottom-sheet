@@ -488,6 +488,10 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
 
       return currentIndex;
     }, [android_keyboardInputMode]);
+
+    // fix IOS Keyboard handler
+    const gesDirection = useSharedValue(0)
+    const gesKeyboardState = useSharedValue(0)
     //#endregion
 
     //#region private methods
@@ -866,6 +870,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
          * reset temporary position variable.
          */
         isInTemporaryPosition.value = false;
+        gesKeyboardState.value = 0;
 
         runOnUI(animateToPosition)(
           nextPosition,
@@ -881,6 +886,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
         isInTemporaryPosition,
         animatedNextPosition,
         animatedClosedPosition,
+        gesKeyboardState
       ]
     );
     const handleForceClose = useCallback(
@@ -910,6 +916,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
          * reset temporary position variable.
          */
         isInTemporaryPosition.value = false;
+        gesKeyboardState.value = 0;
 
         /**
          * set force closing variable.
@@ -929,6 +936,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
         isInTemporaryPosition,
         animatedNextPosition,
         animatedClosedPosition,
+        gesKeyboardState
       ]
     );
     const handleExpand = useCallback(
@@ -1452,9 +1460,6 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
         }
       }
     );
-
-    const gesDirection = useSharedValue(0)
-    const gesKeyboardState = useSharedValue(0)
 
     /**
      * React to internal variables to detect change in snap position.
