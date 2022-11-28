@@ -304,7 +304,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
       const extendedPositionWithKeyboard = Math.max(
         0,
         animatedContainerHeight.value -
-          (animatedSheetHeight.value + keyboardHeightInContainer)
+        (animatedSheetHeight.value + keyboardHeightInContainer)
       );
 
       // detect if keyboard is open and the sheet is in temporary position
@@ -455,11 +455,11 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
 
       const currentIndex = isLayoutCalculated.value
         ? interpolate(
-            animatedPosition.value,
-            adjustedSnapPoints,
-            adjustedSnapPointsIndexes,
-            Extrapolate.CLAMP
-          )
+          animatedPosition.value,
+          adjustedSnapPoints,
+          adjustedSnapPointsIndexes,
+          Extrapolate.CLAMP
+        )
         : -1;
 
       /**
@@ -1356,9 +1356,9 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
          */
         animatedKeyboardHeightInContainer.value = $modal
           ? Math.abs(
-              _keyboardHeight -
-                Math.abs(bottomInset - animatedContainerOffset.value.bottom)
-            )
+            _keyboardHeight -
+            Math.abs(bottomInset - animatedContainerOffset.value.bottom)
+          )
           : Math.abs(_keyboardHeight - animatedContainerOffset.value.bottom);
 
         const hasActiveGesture =
@@ -1503,7 +1503,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
           const comparePos = bottomPos + animatedKeyboardHeight.value
 
           // handle keyboard when gesture content is scrollable
-          if (bottomPos < animatedKeyboardHeight.value
+          if (bottomPos < animatedKeyboardHeight.value + keyboardOffset
             && gesDirection.value > 0
             && _contentGestureState != 4
             && _prevContentGestureState == 4) {
@@ -1515,7 +1515,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
             && gesKeyboardState.value == 1) {
             if (comparePos < 200) {
               runOnJS(handleClose)()
-            } else if (comparePos <= animatedKeyboardHeight.value + 10) {
+            } else if (comparePos <= animatedKeyboardHeight.value - keyboardOffset) {
               runOnJS(Keyboard.dismiss)()
             }
           }
