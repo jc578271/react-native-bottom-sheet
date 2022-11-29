@@ -97,7 +97,17 @@ const BottomSheetBackdropComponent = ({
     flex: 1,
   }));
   const containerStyle = useMemo(
-    () => [styles.container, style, isAnimation ? containerAnimatedStyle : {opacity}],
+    () => [
+      styles.container, 
+      style, 
+      isAnimation 
+        ? containerAnimatedStyle 
+        : (
+          opacity == 0 
+            ? {backgroundColor: 'transparent'} 
+            : {opacity}
+        )
+    ],
     [style, containerAnimatedStyle, isAnimation, opacity]
   );
   //#endregion
