@@ -1517,10 +1517,12 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
           // handler keyboard when gesture content is a view
           } else if (_contentGestureState != 4
             && _handleGestureState != 4
-            && gesKeyboardState.value == 1) {
+            && gesKeyboardState.value == 1
+            && _animationState == ANIMATION_STATE.STOPPED
+          ) {
             if (comparePos < 200) {
               runOnJS(handleClose)()
-            } else if (comparePos <= animatedKeyboardHeight.value - keyboardOffset) {
+            } else if (comparePos <= animatedKeyboardHeight.value) {
               runOnJS(Keyboard.dismiss)()
             }
           }
