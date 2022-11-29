@@ -33,6 +33,7 @@ const BottomSheetBackdropComponent = ({
   onPress,
   style,
   children,
+  isAnimation = true,
 }: BottomSheetDefaultBackdropProps) => {
   //#region hooks
   const { snapToIndex, close } = useBottomSheet();
@@ -96,8 +97,8 @@ const BottomSheetBackdropComponent = ({
     flex: 1,
   }));
   const containerStyle = useMemo(
-    () => [styles.container, style, containerAnimatedStyle],
-    [style, containerAnimatedStyle]
+    () => [styles.container, style, isAnimation ? containerAnimatedStyle : {}],
+    [style, containerAnimatedStyle, isAnimation]
   );
   //#endregion
 

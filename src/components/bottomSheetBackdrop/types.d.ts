@@ -50,4 +50,6 @@ export interface BottomSheetDefaultBackdropProps
    * Child component that will be rendered on backdrop.
    */
   children?: ReactNode | ReactNode[];
+  
+  isAnimation?: boolean;
 }
