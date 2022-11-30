@@ -1533,7 +1533,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
             && gesKeyboardState.value == 1
             && _animationState == ANIMATION_STATE.STOPPED
           ) {
-            if (comparePos < 200) {
+            if (topPos < 200) {
               runOnJS(handleClose)()
             } else if (comparePos <= animatedKeyboardHeight.value) {
               runOnJS(Keyboard.dismiss)()
