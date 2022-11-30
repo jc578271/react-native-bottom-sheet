@@ -499,12 +499,12 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
      * Calculate the next position based on keyboard state.
      */
     const getNextPosition = useWorkletCallback(
-      function getNextPosition() {
+      function getNextPosition(_highestSnapPoint?: number) {
         'worklet';
         const currentIndex = animatedCurrentIndex.value;
         const snapPoints = animatedSnapPoints.value;
         const keyboardState = animatedKeyboardState.value;
-        const highestSnapPoint = animatedHighestSnapPoint.value;
+        const highestSnapPoint = _highestSnapPoint || animatedHighestSnapPoint.value;
 
         /**
          * Handle restore sheet position on blur
@@ -1325,7 +1325,8 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
         } else if (animatedCurrentIndex.value === -1) {
           nextPosition = animatedClosedPosition.value;
         } else if (isInTemporaryPosition.value) {
-          nextPosition = getNextPosition();
+          const _highestSnapPoint = snapPoints[snapPoints.length -1]
+          nextPosition = getNextPosition(_highestSnapPoint);
         } else {
           nextPosition = snapPoints[animatedCurrentIndex.value];
 
