@@ -499,12 +499,14 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
      * Calculate the next position based on keyboard state.
      */
     const getNextPosition = useWorkletCallback(
-      function getNextPosition(_highestSnapPoint?: number) {
+      function getNextPosition(_snapPoints?: number[]) {
         'worklet';
         const currentIndex = animatedCurrentIndex.value;
-        const snapPoints = animatedSnapPoints.value;
+        const snapPoints = _snapPoints || animatedSnapPoints.value;
         const keyboardState = animatedKeyboardState.value;
-        const highestSnapPoint = _highestSnapPoint || animatedHighestSnapPoint.value;
+        const highestSnapPoint = _snapPoints
+          ? _snapPoints[_snapPoints.length - 1]
+          : animatedHighestSnapPoint.value;
 
         /**
          * Handle restore sheet position on blur
@@ -688,8 +690,19 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
          * store next position
          */
         animatedNextPosition.value = position;
-        animatedNextPositionIndex.value =
-          animatedSnapPoints.value.indexOf(position);
+
+        /**
+         * fix error animatedIndex not found when change SnapPoints
+         * while keyboard show
+         */
+        const keyboardPosition = isInTemporaryPosition.value
+        && animatedKeyboardState.value == 1
+          ? animatedKeyboardHeightInContainer.value
+          + keyboardOffset : 0
+
+        // if postion == 0 then nextPostion must be the last snap point
+        animatedNextPositionIndex.value = position == 0 ? animatedSnapPoints.value.length - 1
+          : animatedSnapPoints.value.indexOf(position + keyboardPosition);
 
         /**
          * fire `onAnimate` callback
@@ -718,7 +731,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
           });
         }
       },
-      [handleOnAnimate, _providedAnimationConfigs]
+      [handleOnAnimate, _providedAnimationConfigs, isInTemporaryPosition]
     );
     //#endregion
 
@@ -1325,8 +1338,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
         } else if (animatedCurrentIndex.value === -1) {
           nextPosition = animatedClosedPosition.value;
         } else if (isInTemporaryPosition.value) {
-          const _highestSnapPoint = snapPoints[snapPoints.length -1]
-          nextPosition = getNextPosition(_highestSnapPoint);
+          nextPosition = getNextPosition(snapPoints);
         } else {
           nextPosition = snapPoints[animatedCurrentIndex.value];
 
