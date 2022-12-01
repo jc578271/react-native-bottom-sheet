@@ -1,11 +1,11 @@
-import React, { memo, useCallback, useMemo, useRef } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import {
   LayoutChangeEvent,
   StatusBar,
   StyleProp,
-  View,
   ViewStyle,
 } from 'react-native';
+import Animated, { useSharedValue, useAnimatedStyle, useAnimatedRef } from 'react-native-reanimated';
 import { WINDOW_HEIGHT } from '../../constants';
 import { print } from '../../utilities';
 import { styles } from './styles';
@@ -14,27 +14,31 @@ import type { BottomSheetContainerProps } from './types';
 function BottomSheetContainerComponent({
   containerHeight,
   containerOffset,
-  topInset = 0,
-  bottomInset = 0,
+  topInset = useSharedValue(0),
+  bottomInset = useSharedValue(0),
   shouldCalculateHeight = true,
   detached,
   style,
   children,
 }: BottomSheetContainerProps) {
-  const containerRef = useRef<View>(null);
+  const containerRef = useAnimatedRef<Animated.View>();
   //#region styles
   const containerStyle = useMemo<StyleProp<ViewStyle>>(
     () => [
       style,
       styles.container,
       {
-        top: topInset,
-        bottom: bottomInset,
         overflow: detached ? 'visible' : 'hidden',
       },
     ],
     [style, detached, topInset, bottomInset]
   );
+
+  const animatedStyles = useAnimatedStyle(() => ({
+    top: topInset.value,
+    bottom: bottomInset.value,
+  }))
+
   //#endregion
 
   //#region callbacks
@@ -74,11 +78,11 @@ function BottomSheetContainerComponent({
 
   //#region render
   return (
-    <View
+    <Animated.View
       ref={containerRef}
       pointerEvents="box-none"
       onLayout={shouldCalculateHeight ? handleContainerLayout : undefined}
-      style={containerStyle}
+      style={[containerStyle, animatedStyles]}
       children={children}
     />
   );

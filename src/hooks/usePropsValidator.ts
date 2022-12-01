@@ -58,11 +58,13 @@ export const usePropsValidator = ({
 
     //#region insets
     invariant(
-      typeof topInset === 'number' || typeof topInset === 'undefined',
+      // typeof topInset === 'number' || 
+      typeof topInset === 'undefined',
       `'topInset' was provided but with wrong type ! expected type is a number.`
     );
     invariant(
-      typeof bottomInset === 'number' || typeof bottomInset === 'undefined',
+      // typeof bottomInset === 'number' || 
+      typeof bottomInset === 'undefined',
       `'bottomInset' was provided but with wrong type ! expected type is a number.`
     );
     //#endregion

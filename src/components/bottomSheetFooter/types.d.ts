@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { ViewStyle } from 'react-native';
-import type Animated from 'react-native-reanimated';
+import type Animated, {SharedValue} from 'react-native-reanimated';
 
 export interface BottomSheetFooterProps {
   /**
@@ -19,7 +19,7 @@ export interface BottomSheetDefaultFooterProps extends BottomSheetFooterProps {
    * @type number
    * @default 0
    */
-  bottomInset?: number;
+  bottomInset?: SharedValue<number>;
 
   /**
    * Container style.
