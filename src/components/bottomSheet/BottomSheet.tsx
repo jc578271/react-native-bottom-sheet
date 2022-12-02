@@ -1382,6 +1382,15 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
           )
           : Math.abs(_keyboardHeight - animatedContainerOffset.value.bottom);
 
+        /**
+         * Caculate the keyboard if rotate device
+         * and is modal ans interactive behavior
+         * */
+        if ($modal && keyboardBehavior == KEYBOARD_BEHAVIOR.interactive
+          && _keyboardHeight !== _previousKeyboardHeight) {
+          animatedKeyboardHeightInContainer.value = _keyboardHeight
+        }
+        
         const hasActiveGesture =
           animatedContentGestureState.value === State.ACTIVE ||
           animatedContentGestureState.value === State.BEGAN ||
