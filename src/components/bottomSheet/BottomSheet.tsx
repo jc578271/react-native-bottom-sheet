@@ -1390,7 +1390,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
           && _keyboardHeight !== _previousKeyboardHeight) {
           animatedKeyboardHeightInContainer.value = _keyboardHeight
         }
-        
+
         const hasActiveGesture =
           animatedContentGestureState.value === State.ACTIVE ||
           animatedContentGestureState.value === State.BEGAN ||
@@ -1507,46 +1507,45 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
           _contentGestureState,
           _handleGestureState,
           _animatedPosition,
-          _animatedContainerHeight,
-          _animatedContentHeight,
-          _animatedHandleHeight,
           _animatedKeyboardState,
         } = state
 
         /**
          * Fix keyboard does not dismiss on IOS
          * */
-        if (Platform.OS == "ios" && _animatedKeyboardState == KEYBOARD_STATE.SHOWN) {
+        if (Platform.OS == "ios") {
           const _prevAnimatedPosition = prevState?._animatedPosition
-          const _prevContentGestureState = prevState?._contentGestureState
           const direction = (_prevAnimatedPosition || _animatedPosition) - _animatedPosition
 
-          if (_contentGestureState == 4) {
+          // set gesture direction
+          if (_contentGestureState == 4 || _handleGestureState == 4) {
             gesDirection.value = direction
+          } else {
+            gesDirection.value = 0
           }
 
-          const topPos = _animatedContainerHeight - _animatedPosition
-          const bottomPos = topPos - _animatedContentHeight - _animatedHandleHeight
-          const comparePos = bottomPos + animatedKeyboardHeight.value
-
-          // handle keyboard when gesture content is scrollable
-          if (bottomPos < animatedKeyboardHeight.value + keyboardOffset.value
-            && gesDirection.value > 0
-            && _contentGestureState != 4
-            && _prevContentGestureState == 4) {
+          // hide keyboard when gesture direction is down
+          if (gesKeyboardState.value == 1
+            && gesDirection.value < 0) {
             runOnJS(Keyboard.dismiss)()
+          }
 
-          // handler keyboard when gesture content is a view
-          } else if (_contentGestureState != 4
+          // animate to position when keyboard is hidden
+          if (_contentGestureState != 4
             && _handleGestureState != 4
             && gesKeyboardState.value == 1
-            && _animationState == ANIMATION_STATE.STOPPED
-          ) {
-            if (topPos < 200) {
-              runOnJS(handleClose)()
-            } else if (comparePos <= animatedKeyboardHeight.value) {
-              runOnJS(Keyboard.dismiss)()
-            }
+            && _animationState == ANIMATION_STATE.STOPPED) {
+            let animationConfigs = getKeyboardAnimationConfigs(
+              keyboardAnimationEasing.value,
+              keyboardAnimationDuration.value
+            );
+            const nextPosition = getNextPosition();
+            animateToPosition(
+              nextPosition,
+              ANIMATION_SOURCE.KEYBOARD,
+              0,
+              animationConfigs
+            );
           }
         }
 
