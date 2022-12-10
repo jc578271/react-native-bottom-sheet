@@ -98,13 +98,13 @@ const BottomSheetBackdropComponent = ({
   }));
   const containerStyle = useMemo(
     () => [
-      styles.container, 
-      style, 
-      isAnimation 
-        ? containerAnimatedStyle 
+      styles.container,
+      style,
+      isAnimation
+        ? containerAnimatedStyle
         : (
-          opacity == 0 
-            ? {backgroundColor: 'transparent'} 
+          opacity == 0
+            ? {backgroundColor: 'transparent'}
             : {opacity}
         )
     ],
@@ -114,7 +114,7 @@ const BottomSheetBackdropComponent = ({
 
   //#region effects
   useAnimatedReaction(
-    () => animatedIndex.value <= disappearsOnIndex,
+    () => animatedIndex.value <= disappearsOnIndex || disappearsOnIndex === -1,
     (shouldDisableTouchability, previous) => {
       if (shouldDisableTouchability === previous) {
         return;
