@@ -114,7 +114,7 @@ const BottomSheetBackdropComponent = ({
 
   //#region effects
   useAnimatedReaction(
-    () => animatedIndex.value <= disappearsOnIndex || disappearsOnIndex === -1,
+    () => animatedIndex.value <= disappearsOnIndex,
     (shouldDisableTouchability, previous) => {
       if (shouldDisableTouchability === previous) {
         return;
