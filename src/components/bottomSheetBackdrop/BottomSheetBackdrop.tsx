@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { ViewProps } from 'react-native';
 import Animated, {
   interpolate,
@@ -7,7 +7,9 @@ import Animated, {
   useAnimatedReaction,
   useAnimatedGestureHandler,
   runOnJS,
-} from 'react-native-reanimated';
+  useSharedValue,
+  withTiming
+} from "react-native-reanimated";
 import {
   TapGestureHandler,
   TapGestureHandlerGestureEvent,
@@ -86,16 +88,23 @@ const BottomSheetBackdropComponent = ({
     );
   //#endregion
 
+  const customAnimatedIndex = useSharedValue(-1)
+  useEffect(() => {
+    customAnimatedIndex.value = withTiming(appearsOnIndex, {duration: 350})
+  }, [])
+
   //#region styles
-  const containerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(
-      animatedIndex.value,
-      [-1, disappearsOnIndex, appearsOnIndex],
-      [0, 0, opacity],
-      Extrapolate.CLAMP
-    ),
-    flex: 1,
-  }));
+  const containerAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: interpolate(
+        customAnimatedIndex.value !== appearsOnIndex ? customAnimatedIndex.value : animatedIndex.value,
+        [-1, disappearsOnIndex, appearsOnIndex],
+        [0, 0, opacity],
+        Extrapolate.CLAMP
+      ),
+      flex: 1,
+    }
+  });
   const containerStyle = useMemo(
     () => [
       styles.container,
