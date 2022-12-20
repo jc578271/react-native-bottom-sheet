@@ -6,9 +6,7 @@ import Animated, {
   useAnimatedStyle,
   useAnimatedReaction,
   useAnimatedGestureHandler,
-  runOnJS,
-  useSharedValue,
-  withTiming
+  runOnJS, useSharedValue, withTiming
 } from "react-native-reanimated";
 import {
   TapGestureHandler,
@@ -36,6 +34,7 @@ const BottomSheetBackdropComponent = ({
   style,
   children,
   isAnimation = true,
+  isCustomAnimatedIndex,
 }: BottomSheetDefaultBackdropProps) => {
   //#region hooks
   const { snapToIndex, close } = useBottomSheet();
@@ -53,7 +52,7 @@ const BottomSheetBackdropComponent = ({
   //#region variables
   const [pointerEvents, setPointerEvents] = useState<
     ViewProps['pointerEvents']
-  >(enableTouchThrough ? 'none' : 'auto');
+    >(enableTouchThrough ? 'none' : 'auto');
   //#endregion
 
   //#region callbacks
@@ -90,14 +89,15 @@ const BottomSheetBackdropComponent = ({
 
   const customAnimatedIndex = useSharedValue(-1)
   useEffect(() => {
-    customAnimatedIndex.value = withTiming(appearsOnIndex, {duration: 400})
+    if (isCustomAnimatedIndex)
+      customAnimatedIndex.value = withTiming(appearsOnIndex, {duration: 400})
   }, [])
 
   //#region styles
   const containerAnimatedStyle = useAnimatedStyle(() => {
     return {
       opacity: interpolate(
-        customAnimatedIndex.value !== appearsOnIndex ? customAnimatedIndex.value : animatedIndex.value,
+        isCustomAnimatedIndex && customAnimatedIndex.value !== appearsOnIndex ? customAnimatedIndex.value : animatedIndex.value,
         [-1, disappearsOnIndex, appearsOnIndex],
         [0, 0, opacity],
         Extrapolate.CLAMP
