@@ -6,7 +6,7 @@ import Animated, {
   useAnimatedStyle,
   useAnimatedReaction,
   useAnimatedGestureHandler,
-  runOnJS, useSharedValue, withTiming
+  runOnJS, useSharedValue, withTiming, useDerivedValue
 } from "react-native-reanimated";
 import {
   TapGestureHandler,
@@ -93,11 +93,15 @@ const BottomSheetBackdropComponent = ({
       customAnimatedIndex.value = withTiming(appearsOnIndex, {duration: 400})
   }, [])
 
+  const _animatedIndex = useDerivedValue(() => {
+    return isCustomAnimatedIndex && customAnimatedIndex.value !== appearsOnIndex ? customAnimatedIndex.value : animatedIndex.value
+  }, [isCustomAnimatedIndex])
+
   //#region styles
   const containerAnimatedStyle = useAnimatedStyle(() => {
     return {
       opacity: interpolate(
-        isCustomAnimatedIndex && customAnimatedIndex.value !== appearsOnIndex ? customAnimatedIndex.value : animatedIndex.value,
+        _animatedIndex.value,
         [-1, disappearsOnIndex, appearsOnIndex],
         [0, 0, opacity],
         Extrapolate.CLAMP
