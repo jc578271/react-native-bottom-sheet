@@ -90,7 +90,7 @@ const BottomSheetBackdropComponent = ({
 
   const customAnimatedIndex = useSharedValue(-1)
   useEffect(() => {
-    customAnimatedIndex.value = withTiming(appearsOnIndex, {duration: 350})
+    customAnimatedIndex.value = withTiming(appearsOnIndex, {duration: 400})
   }, [])
 
   //#region styles
