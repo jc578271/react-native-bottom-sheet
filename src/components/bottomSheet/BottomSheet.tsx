@@ -1057,6 +1057,8 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
       collapse: handleCollapse,
       close: handleClose,
       forceClose: handleForceClose,
+      animatedIndex,
+      animatedCurrentIndex,
     }));
     //#endregion
 
