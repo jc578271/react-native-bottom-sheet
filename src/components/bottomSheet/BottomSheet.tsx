@@ -1148,6 +1148,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
     const externalContextVariables = useMemo(
       () => ({
         animatedIndex,
+        animatedCurrentIndex,
         animatedPosition,
         snapToIndex: handleSnapToIndex,
         snapToPosition: handleSnapToPosition,
@@ -1158,6 +1159,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
       }),
       [
         animatedIndex,
+        animatedCurrentIndex,
         animatedPosition,
         handleSnapToIndex,
         handleSnapToPosition,
