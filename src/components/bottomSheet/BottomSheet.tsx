@@ -1535,7 +1535,8 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
           }
 
           // animate to position when keyboard is hidden
-          if (_contentGestureState != 4
+          if (isInTemporaryPosition.value
+            && _contentGestureState != 4
             && _handleGestureState != 4
             && gesKeyboardState.value == 1
             && _animationState == ANIMATION_STATE.STOPPED) {
