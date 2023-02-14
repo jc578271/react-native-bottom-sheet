@@ -547,10 +547,12 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
          * handle interactive behavior
          */
         if (
-          keyboardBehavior === KEYBOARD_BEHAVIOR.interactive &&
-          keyboardState === KEYBOARD_STATE.SHOWN
+          keyboardBehavior === KEYBOARD_BEHAVIOR.interactive
         ) {
-          isInTemporaryPosition.value = true;
+          if (keyboardState === KEYBOARD_STATE.SHOWN) {
+            isInTemporaryPosition.value = true;
+          }
+
           const keyboardHeightInContainer =
             animatedKeyboardHeightInContainer.value + keyboardOffset.value;
           return Math.max(0, highestSnapPoint - keyboardHeightInContainer);
@@ -629,6 +631,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
       animatedAnimationSource.value = ANIMATION_SOURCE.NONE;
       animatedAnimationState.value = ANIMATION_STATE.STOPPED;
     }, [animatedPosition, animatedAnimationState, animatedAnimationSource]);
+
     const animateToPositionCompleted = useWorkletCallback(
       function animateToPositionCompleted(isFinished?: boolean) {
         isForcedClosing.value = false;
@@ -1535,8 +1538,9 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
           }
 
           // animate to position when keyboard is hidden
-          if (isInTemporaryPosition.value
-            && _contentGestureState != 4
+          if (
+            isInTemporaryPosition.value &&
+            _contentGestureState != 4
             && _handleGestureState != 4
             && gesKeyboardState.value == 1
             && _animationState == ANIMATION_STATE.STOPPED) {
