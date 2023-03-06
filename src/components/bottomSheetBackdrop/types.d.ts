@@ -1,10 +1,14 @@
 import { ReactNode } from 'react';
 import type { ViewProps } from 'react-native';
 import type { BottomSheetVariables } from '../../types';
+import { SharedValue } from "react-native-reanimated";
 
 export interface BottomSheetBackdropProps
   extends Pick<ViewProps, 'style'>,
-    BottomSheetVariables {}
+    BottomSheetVariables {
+  animatedNextPositionIndex: SharedValue<number>;
+  animatedCurrentIndex: SharedValue<number>;
+}
 
 export type BackdropPressBehavior = 'none' | 'close' | 'collapse' | number;
 
@@ -54,4 +58,6 @@ export interface BottomSheetDefaultBackdropProps
   isAnimation?: boolean;
 
   isCustomAnimatedIndex?: boolean;
+
+  customAnimatedDuration?: number;
 }

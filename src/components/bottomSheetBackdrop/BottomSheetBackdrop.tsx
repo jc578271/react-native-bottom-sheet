@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
+import React, { memo, useCallback, useMemo, useState } from "react";
 import { ViewProps } from 'react-native';
 import Animated, {
   interpolate,
@@ -25,6 +25,8 @@ import type { BottomSheetDefaultBackdropProps } from './types';
 
 const BottomSheetBackdropComponent = ({
   animatedIndex,
+  animatedNextPositionIndex,
+  animatedCurrentIndex,
   opacity: _providedOpacity,
   appearsOnIndex: _providedAppearsOnIndex,
   disappearsOnIndex: _providedDisappearsOnIndex,
@@ -35,6 +37,7 @@ const BottomSheetBackdropComponent = ({
   children,
   isAnimation = true,
   isCustomAnimatedIndex,
+  customAnimatedDuration = 300
 }: BottomSheetDefaultBackdropProps) => {
   //#region hooks
   const { snapToIndex, close } = useBottomSheet();
@@ -88,13 +91,21 @@ const BottomSheetBackdropComponent = ({
   //#endregion
 
   const customAnimatedIndex = useSharedValue(-1)
-  useEffect(() => {
-    if (isCustomAnimatedIndex)
-      customAnimatedIndex.value = withTiming(appearsOnIndex, {duration: 500})
-  }, [])
+
+  if (isCustomAnimatedIndex) {
+    useAnimatedReaction(() => ({
+      _curIndex: animatedCurrentIndex.value,
+      _nextIndex: animatedNextPositionIndex.value
+    })
+    , _cur => {
+      const {_curIndex, _nextIndex} = _cur
+      const _val = _nextIndex === -Infinity ? _curIndex : _nextIndex
+      customAnimatedIndex.value = withTiming(_val, {duration: customAnimatedDuration})
+    }, [customAnimatedDuration])
+  }
 
   const _animatedIndex = useDerivedValue(() => {
-    return isCustomAnimatedIndex && customAnimatedIndex.value !== appearsOnIndex ? customAnimatedIndex.value : animatedIndex.value
+    return isCustomAnimatedIndex ? customAnimatedIndex.value : animatedIndex.value
   }, [isCustomAnimatedIndex])
 
   //#region styles
