@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useCallback, useMemo } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from "react-native";
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 import { SCROLLABLE_TYPE } from '../../constants';
 import { useBottomSheetInternal } from '../../hooks';
@@ -10,6 +10,7 @@ function BottomSheetViewComponent({
   enableFooterMarginAdjustment = false,
   style,
   children,
+  onLayout,
   ...rest
 }: BottomSheetViewProps) {
   // hooks
@@ -37,7 +38,7 @@ function BottomSheetViewComponent({
     [containerStylePaddingBottom, enableFooterMarginAdjustment]
   );
   const containerStyle = useMemo(
-    () => [style, containerAnimatedStyle],
+    () => [style, {overflow: "scroll"}, containerAnimatedStyle],
     [style, containerAnimatedStyle]
   );
 
@@ -53,7 +54,9 @@ function BottomSheetViewComponent({
   //render
   return (
     <Animated.View style={containerStyle} {...rest}>
-      {children}
+      <View onLayout={onLayout}>
+        {children}
+      </View>
     </Animated.View>
   );
 }
