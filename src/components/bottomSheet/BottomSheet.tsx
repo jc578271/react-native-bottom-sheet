@@ -277,6 +277,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
       animationDuration: keyboardAnimationDuration,
       animationEasing: keyboardAnimationEasing,
       shouldHandleKeyboardEvents,
+      extendedHeight: animatedExtendedKeyboardHeight
     } = useKeyboard();
     const animatedKeyboardHeightInContainer = useSharedValue(0);
     //#endregion
@@ -703,8 +704,17 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
           ? animatedKeyboardHeightInContainer.value
           + keyboardOffset.value : 0
 
+        const _length = animatedSnapPoints.value.length
+
+        const keyboardHeightInContainer =
+          animatedSnapPoints.value[_length-1]
+          - (animatedExtendedKeyboardHeight.value + keyboardOffset.value);
+
+
         // if postion == 0 then nextPostion must be the last snap point
-        animatedNextPositionIndex.value = position == 0 ? animatedSnapPoints.value.length - 1
+        animatedNextPositionIndex.value = position == 0
+        || position == keyboardHeightInContainer
+          ? animatedSnapPoints.value.length - 1
           : animatedSnapPoints.value.indexOf(position + keyboardPosition);
 
         /**
