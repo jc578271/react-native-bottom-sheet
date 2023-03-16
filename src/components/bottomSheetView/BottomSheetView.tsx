@@ -38,7 +38,7 @@ function BottomSheetViewComponent({
     [containerStylePaddingBottom, enableFooterMarginAdjustment]
   );
   const containerStyle = useMemo(
-    () => [style, {overflow: "scroll"}, containerAnimatedStyle],
+    () => [style, containerAnimatedStyle],
     [style, containerAnimatedStyle]
   );
 
@@ -54,7 +54,7 @@ function BottomSheetViewComponent({
   //render
   return (
     <Animated.View style={containerStyle} {...rest}>
-      <View onLayout={onLayout}>
+      <View style={{overflow: "scroll"}} onLayout={onLayout}>
         {children}
       </View>
     </Animated.View>
