@@ -1420,6 +1420,8 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
            */
           (_keyboardState === _previousKeyboardState &&
             _keyboardHeight === _previousKeyboardHeight) ||
+          (_previousKeyboardState == undefined &&
+            _previousKeyboardHeight == undefined) ||
           /**
            * if user is interacting with sheet, then exit the method
            */
