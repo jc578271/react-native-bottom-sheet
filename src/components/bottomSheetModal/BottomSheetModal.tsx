@@ -342,6 +342,7 @@ const BottomSheetModalComponent = forwardRef<
   //#endregion
 
   //#region expose methods
+  // @ts-ignore
   useImperativeHandle(ref, () => ({
     // sheet
     snapToIndex: handleSnapToIndex,

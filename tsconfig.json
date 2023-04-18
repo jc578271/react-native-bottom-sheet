@@ -1,28 +1,39 @@
 {
   "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "pretty": true,
+    "moduleResolution": "node",
+    "target": "es5",
+    "downlevelIteration": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "noEmitOnError": false,
+    "experimentalDecorators": true,
+    "noUnusedLocals": true,
+    "importHelpers": true,
+    "skipLibCheck": true,
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "es2015",
+      "es2016",
+      "es2017",
+      "es2018",
+      "esnext.asynciterable",
+      "esnext"
+    ],
     "baseUrl": ".",
+    "types": ["node"],  /* -> fix NODEJS error */
+    "rootDir": "./src",  /* -> move d.ts file to lib/typescript */
     "paths": {
       "@gorhom/bottom-sheet": ["./src/index"]
-    },
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "jsx": "react",
-    "lib": ["esnext"],
-    "module": "esnext",
-    "moduleResolution": "node",
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitReturns": true,
-    "noImplicitUseStrict": false,
-    "noStrictGenericChecks": false,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "target": "esnext"
+    }
   },
-  "exclude": ["example"],
-  "include": ["src"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "**/*.test.ts?(x)", "src/__tests__/**/*"]
 }

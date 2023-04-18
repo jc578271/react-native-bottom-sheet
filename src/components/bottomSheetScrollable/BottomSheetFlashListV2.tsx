@@ -32,4 +32,5 @@ BottomSheetFlashListV2.displayName = 'BottomSheetFlashListV2';
 
 export default BottomSheetFlashListV2 as <T>(
   props: FlashListProps<T>
+  // @ts-ignore
 ) => ReturnType<typeof FlashList>;

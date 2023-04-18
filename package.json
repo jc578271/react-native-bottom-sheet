@@ -2,10 +2,13 @@
   "name": "@gorhom/bottom-sheet",
   "version": "4.4.5",
   "description": "A performant interactive bottom sheet with fully configurable options 🚀",
-  "main": "src/index.ts",
+  "main": "lib/commonjs/index.js",
+  "module": "lib/module/index.js",
   "react-native": "src/index.ts",
+  "types": "lib/typescript/index.d.ts",
   "files": [
-    "src"
+    "src",
+    "lib"
   ],
   "keywords": [
     "react-native",
@@ -24,15 +27,8 @@
   },
   "homepage": "https://gorhom.github.io/react-native-bottom-sheet",
   "scripts": {
-    "typescript": "tsc --skipLibCheck --noEmit",
-    "lint": "eslint \"**/*.{js,ts,tsx}\"",
-    "build": "bob build && yarn copy-dts && yarn delete-dts.js && yarn delete-debug-view",
-    "copy-dts": "copyfiles -u 1 \"src/**/*.d.ts\" lib/typescript",
-    "delete-debug-view": "rm -r ./lib/commonjs/components/bottomSheetDebugView && rm -r ./lib/module/components/bottomSheetDebugView && rm -r ./lib/typescript/components/bottomSheetDebugView",
-    "delete-dts.js": "find ./lib/commonjs -name '*.d.js*' -delete && find ./lib/module -name '*.d.js*' -delete",
-    "release": "rm -rf lib && yarn build && release-it",
-    "example": "yarn --cwd example",
-    "bootstrap": "yarn install && yarn example"
+    "prepack": "bob build",
+    "install": "bob build"
   },
   "dependencies": {
     "@gorhom/portal": "1.0.14",
@@ -43,6 +39,7 @@
     "@commitlint/config-conventional": "^17.1.0",
     "@react-native-community/eslint-config": "^3.0.0",
     "@release-it/conventional-changelog": "^5.1.0",
+    "@shopify/flash-list": "https://github.com/jc578271/flash-list.git",
     "@types/invariant": "^2.2.34",
     "@types/react": "17.0.2",
     "@types/react-native": "^0.67.7",
@@ -72,7 +69,7 @@
     "source": "src",
     "output": "lib",
     "targets": [
-      "commonjs",
+      ["commonjs", {"copyFlow": true}],
       "module",
       "typescript"
     ]
