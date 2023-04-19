@@ -68,7 +68,12 @@
     "source": "src",
     "output": "lib",
     "targets": [
-      ["commonjs", {"copyFlow": true}],
+      [
+        "commonjs",
+        {
+          "copyFlow": true
+        }
+      ],
       "module",
       "typescript"
     ]
