@@ -27,8 +27,7 @@
   },
   "homepage": "https://gorhom.github.io/react-native-bottom-sheet",
   "scripts": {
-    "prepack": "bob build",
-    "install": "bob build"
+    "prepare": "bob build"
   },
   "dependencies": {
     "@gorhom/portal": "1.0.14",
