@@ -2,10 +2,7 @@
   "name": "@gorhom/bottom-sheet",
   "version": "4.4.5",
   "description": "A performant interactive bottom sheet with fully configurable options 🚀",
-  "main": "lib/commonjs/index.js",
-  "module": "lib/module/index.js",
-  "react-native": "src/index.ts",
-  "types": "lib/typescript/index.d.ts",
+  "main": "src/index.ts",
   "files": [
     "src",
     "lib"
@@ -27,7 +24,6 @@
   },
   "homepage": "https://gorhom.github.io/react-native-bottom-sheet",
   "scripts": {
-    "prepare": "bob build"
   },
   "dependencies": {
     "@gorhom/portal": "1.0.14",
