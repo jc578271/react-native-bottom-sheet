@@ -1,14 +1,13 @@
-import * as React from 'react';
-import {FlashList, FlashListProps} from '@shopify/flash-list';
-
+import React, {forwardRef} from 'react';
 import Animated from 'react-native-reanimated';
 import {
   BottomSheetScrollView,
   createBottomSheetScrollableComponent,
   SCROLLABLE_TYPE
 } from "@gorhom/bottom-sheet";
+import {FlashList, FlashListProps} from '@shopify/flash-list';
 
-const F2 = React.forwardRef((props: any, ref) => {
+const _FlashList = forwardRef((props: any, ref) => {
   return (
     <FlashList
       {...props}
@@ -21,7 +20,7 @@ const F2 = React.forwardRef((props: any, ref) => {
 });
 
 const AnimatedFlashList = Animated.createAnimatedComponent<FlashListProps<any>>(
-  F2 as any,
+  _FlashList as any,
 );
 
 const BottomSheetFlashListComponent = createBottomSheetScrollableComponent(
