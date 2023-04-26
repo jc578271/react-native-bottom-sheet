@@ -26,7 +26,8 @@
   },
   "homepage": "https://gorhom.github.io/react-native-bottom-sheet",
   "scripts": {
-    "prepare": "bob build"
+    "prepare": "bob build && yarn copy-dts",
+    "copy-dts": "copyfiles -u 1 \"src/**/*.d.ts\" lib/typescript"
   },
   "dependencies": {
     "@gorhom/portal": "1.0.14",
