@@ -2,11 +2,14 @@
   "name": "@gorhom/bottom-sheet",
   "version": "4.4.5",
   "description": "A performant interactive bottom sheet with fully configurable options 🚀",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "lib/commonjs/index",
+  "module": "lib/module/index",
+  "types": "lib/typescript/index.d.ts",
+  "react-native": "src/index.ts",
   "files": [
+    "src",
     "lib",
-    "src"
+    "mock.js"
   ],
   "keywords": [
     "react-native",
@@ -25,8 +28,8 @@
   },
   "homepage": "https://gorhom.github.io/react-native-bottom-sheet",
   "scripts": {
-    "prepare": "tsc -b && yarn copy-dts",
-    "copy-dts": "copyfiles -u 1 \"src/**/*.d.ts\" lib"
+    "prepare": "bob build && yarn copy-dts",
+    "copy-dts": "copyfiles -u 1 \"src/**/*.d.ts\" lib/typescript"
   },
   "dependencies": {
     "@gorhom/portal": "1.0.14",
@@ -67,12 +70,7 @@
     "source": "src",
     "output": "lib",
     "targets": [
-      [
-        "commonjs",
-        {
-          "copyFlow": true
-        }
-      ],
+      "commonjs",
       "module",
       "typescript"
     ]
