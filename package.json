@@ -38,7 +38,6 @@
     "@commitlint/config-conventional": "^17.1.0",
     "@react-native-community/eslint-config": "^3.0.0",
     "@release-it/conventional-changelog": "^5.1.0",
-    "@shopify/flash-list": "https://github.com/jc578271/flash-list.git",
     "@types/invariant": "^2.2.34",
     "@types/react": "17.0.2",
     "@types/react-native": "^0.67.7",
