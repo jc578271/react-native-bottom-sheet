@@ -1502,6 +1502,10 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
       }
     );
 
+    const dismissKeyboard = useCallback(() => {
+      Keyboard.dismiss()
+    }, [])
+
     /**
      * React to internal variables to detect change in snap position.
      *
@@ -1546,7 +1550,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
           // hide keyboard when gesture direction is down
           if (gesKeyboardState.value == 1
             && gesDirection.value < 0) {
-            runOnJS(Keyboard.dismiss)()
+            runOnJS(dismissKeyboard)()
           }
 
           // animate to position when keyboard is hidden
