@@ -14,6 +14,7 @@ import type {
 } from '../types';
 import { clamp } from '../utilities/clamp';
 import { snapPoint } from '../utilities/snapPoint';
+import { useCallback } from "react";
 
 type GestureEventContextType = {
   initialPosition: number;
@@ -225,6 +226,11 @@ export const useGestureEventsHandlersDefault: GestureEventsHandlersHookType =
           animatedScrollableContentOffsetY,
         ]
       );
+
+    const dimissKeyboard = useCallback(() => {
+      Keyboard.dismiss()
+    }, [])
+
     const handleOnEnd: GestureEventHandlerCallbackType<GestureEventContextType> =
       useWorkletCallback(
         function handleOnEnd(
@@ -296,7 +302,7 @@ export const useGestureEventsHandlersDefault: GestureEventsHandlersHookType =
                 absoluteY > WINDOW_HEIGHT - animatedKeyboardHeight.value
               )
             ) {
-              runOnJS(Keyboard.dismiss)();
+              runOnJS(dimissKeyboard)();
             }
           }
 
