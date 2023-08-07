@@ -2,7 +2,9 @@
   "name": "@gorhom/bottom-sheet",
   "version": "4.4.5",
   "description": "A performant interactive bottom sheet with fully configurable options 🚀",
-  "main": "src/index.ts",
+  "main": "lib/commonjs/index",
+  "module": "lib/module/index",
+  "types": "lib/typescript/index.d.ts",
   "react-native": "src/index.ts",
   "files": [
     "src",
@@ -26,7 +28,7 @@
   },
   "homepage": "https://gorhom.github.io/react-native-bottom-sheet",
   "scripts": {
-    "build": "bob build && yarn copy-dts",
+    "prepare": "bob build && yarn copy-dts",
     "copy-dts": "copyfiles -u 1 \"src/**/*.d.ts\" lib/typescript"
   },
   "dependencies": {
