@@ -38,7 +38,7 @@ function BottomSheetViewComponent({
     [containerStylePaddingBottom, enableFooterMarginAdjustment]
   );
   const containerStyle = useMemo(
-    () => [style ,containerAnimatedStyle],
+    () => [style, containerAnimatedStyle],
     [style, containerAnimatedStyle]
   );
 

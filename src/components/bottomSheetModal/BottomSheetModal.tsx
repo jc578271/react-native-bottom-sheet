@@ -45,6 +45,7 @@ const BottomSheetModalComponent = forwardRef<
     snapPoints,
     enablePanDownToClose = true,
     animateOnMount = true,
+    containerComponent: ContainerComponent = React.Fragment,
 
     // callbacks
     onChange: _providedOnChange,
@@ -142,30 +143,36 @@ const BottomSheetModalComponent = forwardRef<
     }
     bottomSheetRef.current?.snapToPosition(...args);
   }, []);
-  const handleExpand = useCallback((...args) => {
+  const handleExpand = useCallback<BottomSheetMethods['expand']>((...args) => {
     if (minimized.current) {
       return;
     }
     bottomSheetRef.current?.expand(...args);
   }, []);
-  const handleCollapse = useCallback((...args) => {
-    if (minimized.current) {
-      return;
-    }
-    bottomSheetRef.current?.collapse(...args);
-  }, []);
-  const handleClose = useCallback((...args) => {
+  const handleCollapse = useCallback<BottomSheetMethods['collapse']>(
+    (...args) => {
+      if (minimized.current) {
+        return;
+      }
+      bottomSheetRef.current?.collapse(...args);
+    },
+    []
+  );
+  const handleClose = useCallback<BottomSheetMethods['close']>((...args) => {
     if (minimized.current) {
       return;
     }
     bottomSheetRef.current?.close(...args);
   }, []);
-  const handleForceClose = useCallback((...args) => {
-    if (minimized.current) {
-      return;
-    }
-    bottomSheetRef.current?.forceClose(...args);
-  }, []);
+  const handleForceClose = useCallback<BottomSheetMethods['forceClose']>(
+    (...args) => {
+      if (minimized.current) {
+        return;
+      }
+      bottomSheetRef.current?.forceClose(...args);
+    },
+    []
+  );
   //#endregion
 
   //#region bottom sheet modal methods
@@ -342,7 +349,6 @@ const BottomSheetModalComponent = forwardRef<
   //#endregion
 
   //#region expose methods
-  // @ts-ignore
   useImperativeHandle(ref, () => ({
     // sheet
     snapToIndex: handleSnapToIndex,
@@ -370,23 +376,25 @@ const BottomSheetModalComponent = forwardRef<
       handleOnUpdate={handlePortalRender}
       handleOnUnmount={handlePortalOnUnmount}
     >
-      <BottomSheet
-        {...bottomSheetProps}
-        ref={bottomSheetRef}
-        key={key}
-        index={index}
-        snapPoints={snapPoints}
-        enablePanDownToClose={enablePanDownToClose}
-        animateOnMount={animateOnMount}
-        containerHeight={containerHeight}
-        containerOffset={containerOffset}
-        onChange={handleBottomSheetOnChange}
-        onClose={handleBottomSheetOnClose}
-        children={
-          typeof Content === 'function' ? <Content data={data} /> : Content
-        }
-        $modal={true}
-      />
+      <ContainerComponent>
+        <BottomSheet
+          {...bottomSheetProps}
+          ref={bottomSheetRef}
+          key={key}
+          index={index}
+          snapPoints={snapPoints}
+          enablePanDownToClose={enablePanDownToClose}
+          animateOnMount={animateOnMount}
+          containerHeight={containerHeight}
+          containerOffset={containerOffset}
+          onChange={handleBottomSheetOnChange}
+          onClose={handleBottomSheetOnClose}
+          children={
+            typeof Content === 'function' ? <Content data={data} /> : Content
+          }
+          $modal={true}
+        />
+      </ContainerComponent>
     </Portal>
   ) : null;
 });

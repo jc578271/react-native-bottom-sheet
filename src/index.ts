@@ -26,8 +26,6 @@ export {
   BottomSheetSectionList,
   BottomSheetFlatList,
   BottomSheetVirtualizedList,
-  // BottomSheetFlashList,
-  // BottomSheetFlashListV2
 } from './components/bottomSheetScrollable';
 export { default as BottomSheetHandle } from './components/bottomSheetHandle';
 export { default as BottomSheetDraggableView } from './components/bottomSheetDraggableView';

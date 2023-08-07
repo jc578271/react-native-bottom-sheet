@@ -5,17 +5,23 @@ import {
   StyleProp,
   ViewStyle,
 } from 'react-native';
-import Animated, { useSharedValue, useAnimatedStyle, useAnimatedRef } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useAnimatedRef } from 'react-native-reanimated';
 import { WINDOW_HEIGHT } from '../../constants';
 import { print } from '../../utilities';
 import { styles } from './styles';
 import type { BottomSheetContainerProps } from './types';
+import { SharedValue } from "react-native-reanimated";
+
+const getRawValue = (value: number | SharedValue<number>) => {
+  "worklet";
+  return typeof value === "number" ? value : value.value
+}
 
 function BottomSheetContainerComponent({
   containerHeight,
   containerOffset,
-  topInset = useSharedValue(0),
-  bottomInset = useSharedValue(0),
+  topInset = 0,
+  bottomInset = 0,
   shouldCalculateHeight = true,
   detached,
   style,
@@ -35,8 +41,8 @@ function BottomSheetContainerComponent({
   );
 
   const animatedStyles = useAnimatedStyle(() => ({
-    top: topInset.value,
-    bottom: bottomInset.value,
+    top: getRawValue(topInset),
+    bottom: getRawValue(bottomInset),
   }))
 
   //#endregion
@@ -53,12 +59,12 @@ function BottomSheetContainerComponent({
       containerRef.current?.measure(
         (_x, _y, _width, _height, _pageX, pageY) => {
           containerOffset.value = {
-            top: pageY,
+            top: pageY ?? 0,
             left: 0,
             right: 0,
             bottom: Math.max(
               0,
-              WINDOW_HEIGHT - (pageY + height + (StatusBar.currentHeight ?? 0))
+              WINDOW_HEIGHT - ((pageY ?? 0) + height + (StatusBar.currentHeight ?? 0))
             ),
           };
         }

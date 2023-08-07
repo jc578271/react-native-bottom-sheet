@@ -125,14 +125,14 @@ export interface BottomSheetProps
    * @type number
    * @default 0
    */
-  topInset?: SharedValue<number>;
+  topInset?: number | SharedValue<number>;
   /**
    * Bottom inset value helps to calculate percentage snap points values,
    * usually comes from `react-native-safe-area-context` hook `useSafeArea`.
    * @type number
    * @default 0
    */
-  bottomInset?: SharedValue<number>;
+  bottomInset?: number | SharedValue<number>;
   //#endregion
 
   //#region keyboard
@@ -159,7 +159,8 @@ export interface BottomSheetProps
    * @default `adjustPan`
    */
   android_keyboardInputMode?: keyof typeof KEYBOARD_INPUT_MODE;
-  keyboardOffset?: SharedValue<number>;
+
+  keyboardOffset?: number | SharedValue<number>;
 
   //#endregion
 
@@ -284,9 +285,9 @@ export interface BottomSheetProps
   footerComponent?: React.FC<BottomSheetFooterProps>;
   /**
    * A scrollable node or normal view.
-   * @type React.ReactNode[] | React.ReactNode
+   * @type (() => React.ReactElement) | React.ReactNode[] | React.ReactNode
    */
-  children: (() => React.ReactNode) | React.ReactNode[] | React.ReactNode;
+  children: (() => React.ReactElement) | React.ReactNode[] | React.ReactNode;
   //#endregion
 
   //#region private

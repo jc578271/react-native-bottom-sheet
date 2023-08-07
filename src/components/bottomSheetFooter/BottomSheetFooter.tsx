@@ -1,14 +1,19 @@
 import React, { memo, useCallback, useMemo } from 'react';
 import { LayoutChangeEvent } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
+import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
 import { KEYBOARD_STATE } from '../../constants';
 import { useBottomSheetInternal } from '../../hooks';
 import type { BottomSheetDefaultFooterProps } from './types';
 import { styles } from './styles';
 
+const getRawValue = (value: number | SharedValue<number>) => {
+  "worklet";
+  return typeof value === "number" ? value : value.value
+}
+
 function BottomSheetFooterComponent({
   animatedFooterPosition,
-  bottomInset = useSharedValue(0),
+  bottomInset = 0,
   style,
   children,
 }: BottomSheetDefaultFooterProps) {
@@ -25,7 +30,7 @@ function BottomSheetFooterComponent({
      * Offset the bottom inset only when keyboard is not shown
      */
     if (animatedKeyboardState.value !== KEYBOARD_STATE.SHOWN) {
-      footerTranslateY = footerTranslateY - bottomInset.value;
+      footerTranslateY = footerTranslateY - getRawValue(bottomInset);
     }
 
     return {

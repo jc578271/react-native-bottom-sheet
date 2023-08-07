@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useMemo, useState } from "react";
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import { ViewProps } from 'react-native';
 import Animated, {
   interpolate,
@@ -6,7 +6,10 @@ import Animated, {
   useAnimatedStyle,
   useAnimatedReaction,
   useAnimatedGestureHandler,
-  runOnJS, useSharedValue, withTiming, useDerivedValue
+  runOnJS,
+  useSharedValue,
+  withTiming,
+  useDerivedValue
 } from "react-native-reanimated";
 import {
   TapGestureHandler,
@@ -55,7 +58,7 @@ const BottomSheetBackdropComponent = ({
   //#region variables
   const [pointerEvents, setPointerEvents] = useState<
     ViewProps['pointerEvents']
-    >(enableTouchThrough ? 'none' : 'auto');
+  >(enableTouchThrough ? 'none' : 'auto');
   //#endregion
 
   //#region callbacks
