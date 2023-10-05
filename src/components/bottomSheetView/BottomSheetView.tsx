@@ -1,26 +1,30 @@
 import React, { memo, useEffect, useCallback, useMemo } from 'react';
-import { StyleSheet, View } from "react-native";
+import { LayoutChangeEvent, StyleSheet } from 'react-native';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 import { SCROLLABLE_TYPE } from '../../constants';
 import { useBottomSheetInternal } from '../../hooks';
 import type { BottomSheetViewProps } from './types';
+import { print } from '../../utilities';
 
 function BottomSheetViewComponent({
   focusHook: useFocusHook = useEffect,
   enableFooterMarginAdjustment = false,
+  onLayout,
   style,
   children,
-  onLayout,
   ...rest
 }: BottomSheetViewProps) {
-  // hooks
+  //#region hooks
   const {
     animatedScrollableContentOffsetY,
     animatedScrollableType,
     animatedFooterHeight,
+    enableDynamicSizing,
+    animatedContentHeight,
   } = useBottomSheetInternal();
+  //#endregion
 
-  // styles
+  //#region styles
   const containerStylePaddingBottom = useMemo(() => {
     const flattenStyle = StyleSheet.flatten(style);
     const paddingBottom =
@@ -41,22 +45,42 @@ function BottomSheetViewComponent({
     () => [style, containerAnimatedStyle],
     [style, containerAnimatedStyle]
   );
+  //#endregion
 
-  // callback
+  //#region callbacks
   const handleSettingScrollable = useCallback(() => {
     animatedScrollableContentOffsetY.value = 0;
     animatedScrollableType.value = SCROLLABLE_TYPE.VIEW;
   }, [animatedScrollableContentOffsetY, animatedScrollableType]);
+  const handleLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      if (enableDynamicSizing) {
+        animatedContentHeight.value = event.nativeEvent.layout.height;
+      }
+
+      if (onLayout) {
+        onLayout(event);
+      }
+
+      print({
+        component: BottomSheetView.displayName,
+        method: 'handleLayout',
+        params: {
+          height: event.nativeEvent.layout.height,
+        },
+      });
+    },
+    [onLayout, animatedContentHeight, enableDynamicSizing]
+  );
+  //#endregion
 
   // effects
   useFocusHook(handleSettingScrollable);
 
   //render
   return (
-    <Animated.View  {...rest} style={[containerStyle, {overflow: "scroll"}]}>
-      <View onLayout={onLayout}>
-        {children}
-      </View>
+    <Animated.View onLayout={handleLayout} style={containerStyle} {...rest}>
+      {children}
     </Animated.View>
   );
 }
