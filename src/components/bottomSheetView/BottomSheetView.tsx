@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useCallback, useMemo } from 'react';
-import { LayoutChangeEvent, StyleSheet } from 'react-native';
+import { LayoutChangeEvent, StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 import { SCROLLABLE_TYPE } from '../../constants';
 import { useBottomSheetInternal } from '../../hooks';
@@ -79,8 +79,10 @@ function BottomSheetViewComponent({
 
   //render
   return (
-    <Animated.View onLayout={handleLayout} style={containerStyle} {...rest}>
-      {children}
+    <Animated.View style={[containerStyle, {overflow: "scroll"}]} {...rest}>
+      <View onLayout={handleLayout}>
+        {children}
+      </View>
     </Animated.View>
   );
 }
