@@ -1,7 +1,7 @@
 import type { ReactElement, ReactNode } from 'react';
 import { ViewStyle } from 'react-native';
 import type {SharedValue} from 'react-native-reanimated';
-import Animated from 'react-native-reanimated';
+import type Animated from 'react-native-reanimated';
 
 export interface BottomSheetFooterProps {
   /**

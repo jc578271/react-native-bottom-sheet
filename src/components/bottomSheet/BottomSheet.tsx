@@ -76,6 +76,9 @@ import {
   INITIAL_CONTAINER_OFFSET,
   INITIAL_VALUE,
   DEFAULT_DYNAMIC_SIZING,
+  DEFAULT_ACCESSIBLE,
+  DEFAULT_ACCESSIBILITY_LABEL,
+  DEFAULT_ACCESSIBILITY_ROLE
 } from './constants';
 import type { BottomSheetMethods, Insets } from '../../types';
 import type { BottomSheetProps, AnimateToPositionType } from './types';
@@ -166,6 +169,13 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
       backgroundComponent,
       footerComponent,
       children: Content,
+
+      // accessibility
+      accessible: _providedAccessible = DEFAULT_ACCESSIBLE,
+      accessibilityLabel:
+        _providedAccessibilityLabel = DEFAULT_ACCESSIBILITY_LABEL,
+      accessibilityRole:
+        _providedAccessibilityRole = DEFAULT_ACCESSIBILITY_ROLE,
     } = props;
     //#endregion
 
@@ -1650,6 +1660,9 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
                 <Animated.View
                   pointerEvents="box-none"
                   style={contentMaskContainerStyle}
+                  accessible={_providedAccessible ?? undefined}
+                  accessibilityRole={_providedAccessibilityRole ?? undefined}
+                  accessibilityLabel={_providedAccessibilityLabel ?? undefined}
                 >
                   <BottomSheetDraggableView
                     key="BottomSheetRootDraggableView"
@@ -1684,18 +1697,18 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
                   // topInset,
                   // bottomInset,
                   animatedSheetState,
-                  animatedScrollableState,
-                  animatedScrollableOverrideState,
+                  // animatedScrollableState,
+                  // animatedScrollableOverrideState,
                   // isScrollableRefreshable,
                   // animatedScrollableContentOffsetY,
                   // keyboardState,
                   // animatedIndex,
                   // animatedCurrentIndex,
                   // animatedPosition,
-                  // animatedContainerHeight,
-                  // animatedSheetHeight,
-                  // animatedHandleHeight,
-                  // animatedContentHeight,
+                  animatedContainerHeight,
+                  animatedSheetHeight,
+                  animatedHandleHeight,
+                  animatedContentHeight,
                   // // keyboardHeight,
                   // isLayoutCalculated,
                   // isContentHeightFixed,

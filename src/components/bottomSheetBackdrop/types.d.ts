@@ -1,6 +1,9 @@
 import { ReactNode } from 'react';
 import type { ViewProps } from 'react-native';
-import type { BottomSheetVariables } from '../../types';
+import type {
+  BottomSheetVariables,
+  NullableAccessibilityProps,
+} from '../../types';
 import { SharedValue } from "react-native-reanimated";
 
 export interface BottomSheetBackdropProps
@@ -13,7 +16,8 @@ export interface BottomSheetBackdropProps
 export type BackdropPressBehavior = 'none' | 'close' | 'collapse' | number;
 
 export interface BottomSheetDefaultBackdropProps
-  extends BottomSheetBackdropProps {
+  extends BottomSheetBackdropProps,
+    NullableAccessibilityProps {
   /**
    * Backdrop opacity.
    * @type number
@@ -54,10 +58,4 @@ export interface BottomSheetDefaultBackdropProps
    * Child component that will be rendered on backdrop.
    */
   children?: ReactNode | ReactNode[];
-
-  isAnimation?: boolean;
-
-  isCustomAnimatedIndex?: boolean;
-
-  customAnimatedDuration?: number;
 }
