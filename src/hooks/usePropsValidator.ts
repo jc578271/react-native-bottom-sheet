@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import invariant from 'invariant';
 import { INITIAL_SNAP_POINT } from '../components/bottomSheet/constants';
 import type { BottomSheetProps } from '../components/bottomSheet';
+import { SharedValue } from "react-native-reanimated";
 
 /**
  * @todo
@@ -64,11 +65,11 @@ export const usePropsValidator = ({
 
     //#region insets
     invariant(
-      typeof topInset === 'number' || typeof topInset === 'undefined',
+      typeof topInset === 'undefined' || typeof getRawValue(topInset) === 'number',
       `'topInset' was provided but with wrong type ! expected type is a number.`
     );
     invariant(
-      typeof bottomInset === 'number' || typeof bottomInset === 'undefined',
+      typeof bottomInset === 'undefined' || typeof getRawValue(bottomInset) === 'number',
       `'bottomInset' was provided but with wrong type ! expected type is a number.`
     );
     //#endregion
@@ -76,3 +77,8 @@ export const usePropsValidator = ({
     // animations
   }, [index, snapPoints, topInset, bottomInset, enableDynamicSizing]);
 };
+
+const getRawValue = (value: number | SharedValue<number>) => {
+  "worklet";
+  return typeof value === "number" ? value : value.value
+}

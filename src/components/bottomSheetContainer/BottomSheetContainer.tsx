@@ -1,15 +1,21 @@
-import React, { memo, useCallback, useMemo, useRef } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import {
   LayoutChangeEvent,
   StatusBar,
   StyleProp,
-  View,
   ViewStyle,
 } from 'react-native';
+import Animated, { useAnimatedStyle, useAnimatedRef } from 'react-native-reanimated';
 import { WINDOW_HEIGHT } from '../../constants';
 import { print } from '../../utilities';
 import { styles } from './styles';
 import type { BottomSheetContainerProps } from './types';
+import { SharedValue } from "react-native-reanimated";
+
+const getRawValue = (value: number | SharedValue<number>) => {
+  "worklet";
+  return typeof value === "number" ? value : value.value
+}
 
 function BottomSheetContainerComponent({
   containerHeight,
@@ -21,20 +27,24 @@ function BottomSheetContainerComponent({
   style,
   children,
 }: BottomSheetContainerProps) {
-  const containerRef = useRef<View>(null);
+  const containerRef = useAnimatedRef<Animated.View>();
   //#region styles
   const containerStyle = useMemo<StyleProp<ViewStyle>>(
     () => [
       style,
       styles.container,
       {
-        top: topInset,
-        bottom: bottomInset,
         overflow: detached ? 'visible' : 'hidden',
       },
     ],
     [style, detached, topInset, bottomInset]
   );
+
+  const animatedStyles = useAnimatedStyle(() => ({
+    top: getRawValue(topInset),
+    bottom: getRawValue(bottomInset),
+  }))
+
   //#endregion
 
   //#region callbacks
@@ -54,8 +64,7 @@ function BottomSheetContainerComponent({
             right: 0,
             bottom: Math.max(
               0,
-              WINDOW_HEIGHT -
-                ((pageY ?? 0) + height + (StatusBar.currentHeight ?? 0))
+              WINDOW_HEIGHT - ((pageY ?? 0) + height + (StatusBar.currentHeight ?? 0))
             ),
           };
         }
@@ -75,11 +84,11 @@ function BottomSheetContainerComponent({
 
   //#region render
   return (
-    <View
+    <Animated.View
       ref={containerRef}
       pointerEvents="box-none"
       onLayout={shouldCalculateHeight ? handleContainerLayout : undefined}
-      style={containerStyle}
+      style={[containerStyle, animatedStyles]}
       children={children}
     />
   );

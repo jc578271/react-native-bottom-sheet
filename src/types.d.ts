@@ -76,6 +76,10 @@ export interface BottomSheetMethods {
    * @see {WithTimingConfig}
    */
   forceClose: (animationConfigs?: WithSpringConfig | WithTimingConfig) => void;
+
+  animatedIndex: SharedValue<number>;
+
+  animatedCurrentIndex: SharedValue<number>;
 }
 export interface BottomSheetModalMethods extends BottomSheetMethods {
   /**

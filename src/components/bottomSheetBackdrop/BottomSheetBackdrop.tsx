@@ -14,7 +14,10 @@ import Animated, {
   useAnimatedReaction,
   useAnimatedGestureHandler,
   runOnJS,
-} from 'react-native-reanimated';
+  useSharedValue,
+  withTiming,
+  useDerivedValue
+} from "react-native-reanimated";
 import {
   TapGestureHandler,
   TapGestureHandlerGestureEvent,
@@ -36,6 +39,8 @@ import type { BottomSheetDefaultBackdropProps } from './types';
 
 const BottomSheetBackdropComponent = ({
   animatedIndex,
+  animatedNextPositionIndex,
+  animatedCurrentIndex,
   opacity: _providedOpacity,
   appearsOnIndex: _providedAppearsOnIndex,
   disappearsOnIndex: _providedDisappearsOnIndex,
@@ -44,6 +49,9 @@ const BottomSheetBackdropComponent = ({
   onPress,
   style,
   children,
+  isAnimation = true,
+  isCustomAnimatedIndex,
+  customAnimatedDuration = 300,
   accessible: _providedAccessible = DEFAULT_ACCESSIBLE,
   accessibilityRole: _providedAccessibilityRole = DEFAULT_ACCESSIBILITY_ROLE,
   accessibilityLabel: _providedAccessibilityLabel = DEFAULT_ACCESSIBILITY_LABEL,
@@ -102,19 +110,49 @@ const BottomSheetBackdropComponent = ({
     );
   //#endregion
 
+  const customAnimatedIndex = useSharedValue(-1)
+
+  if (isCustomAnimatedIndex) {
+    useAnimatedReaction(() => ({
+      _curIndex: animatedCurrentIndex.value,
+      _nextIndex: animatedNextPositionIndex.value
+    })
+    , _cur => {
+      const {_curIndex, _nextIndex} = _cur
+      const _val = _nextIndex === -Infinity ? _curIndex : _nextIndex
+      customAnimatedIndex.value = withTiming(_val, {duration: customAnimatedDuration})
+    }, [customAnimatedDuration])
+  }
+
+  const _animatedIndex = useDerivedValue(() => {
+    return isCustomAnimatedIndex ? customAnimatedIndex.value : animatedIndex.value
+  }, [isCustomAnimatedIndex])
+
   //#region styles
-  const containerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(
-      animatedIndex.value,
-      [-1, disappearsOnIndex, appearsOnIndex],
-      [0, 0, opacity],
-      Extrapolate.CLAMP
-    ),
-    flex: 1,
-  }));
+  const containerAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: interpolate(
+        _animatedIndex.value,
+        [-1, disappearsOnIndex, appearsOnIndex],
+        [0, 0, opacity],
+        Extrapolate.CLAMP
+      ),
+      flex: 1,
+    }
+  });
   const containerStyle = useMemo(
-    () => [styles.container, style, containerAnimatedStyle],
-    [style, containerAnimatedStyle]
+    () => [
+      styles.container,
+      style,
+      isAnimation
+        ? containerAnimatedStyle
+        : (
+          opacity == 0
+            ? {backgroundColor: 'transparent'}
+            : {opacity}
+        )
+    ],
+    [style, containerAnimatedStyle, isAnimation, opacity]
   );
   //#endregion
 

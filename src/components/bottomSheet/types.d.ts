@@ -141,14 +141,14 @@ export interface BottomSheetProps
    * @type number
    * @default 0
    */
-  topInset?: number;
+  topInset?: number | SharedValue<number>;
   /**
    * Bottom inset value helps to calculate percentage snap points values,
    * usually comes from `react-native-safe-area-context` hook `useSafeArea`.
    * @type number
    * @default 0
    */
-  bottomInset?: number;
+  bottomInset?: number | SharedValue<number>;
   /**
    * Max dynamic content size height to limit the bottom sheet height
    * from exceeding a provided size.
@@ -182,6 +182,8 @@ export interface BottomSheetProps
    * @default `adjustPan`
    */
   android_keyboardInputMode?: keyof typeof KEYBOARD_INPUT_MODE;
+
+  keyboardOffset?: number | SharedValue<number>;
 
   //#endregion
 

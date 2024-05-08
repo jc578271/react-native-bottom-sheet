@@ -85,9 +85,7 @@ export function createBottomSheetScrollableComponent<T, P>(
     const handleContentSizeChange = useStableCallback(
       (contentWidth: number, contentHeight: number) => {
         if (enableDynamicSizing) {
-          animatedContentHeight.value =
-            contentHeight +
-            (enableFooterMarginAdjustment ? animatedFooterHeight.value : 0);
+          animatedContentHeight.value = contentHeight;
         }
 
         if (onContentSizeChange) {
