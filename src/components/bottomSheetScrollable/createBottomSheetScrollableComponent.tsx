@@ -91,7 +91,7 @@ export function createBottomSheetScrollableComponent<T, P>(
         if (enableDynamicSizing) {
           // animatedContentHeight.value = contentHeight;
           // if (name) {
-          if (animatedContentHeightMapRef.current[routeKey]?.['list'] < contentHeight) {
+          if ((animatedContentHeightMapRef.current[routeKey]?.['list'] || 0) < contentHeight) {
             animatedContentHeightMapRef.current = {
               ...animatedContentHeightMapRef.current,
               [routeKey]: {
