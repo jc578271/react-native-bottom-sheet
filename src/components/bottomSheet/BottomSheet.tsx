@@ -212,7 +212,9 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
     const animatedContentHeightMapRef = useRef<{[id: string]: {[id: string]: number}}>({})
     const animatedContentHeight = useDerivedValue(() => {
       let result = 0;
-      for (let height of animatedContentHeightMap.value[routeKey]) {
+      if (!animatedContentHeightMap.value[routeKey]) return 0
+      for (let key in animatedContentHeightMap.value[routeKey]) {
+        const height = animatedContentHeightMap.value[routeKey][key]
         result += height
       }
       return result
