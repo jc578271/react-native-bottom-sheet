@@ -12,6 +12,7 @@ function BottomSheetViewComponent({
   onLayout,
   style,
   children,
+  name = 'no_name_list',
   ...rest
 }: BottomSheetViewProps) {
   //#region hooks
@@ -21,6 +22,8 @@ function BottomSheetViewComponent({
     animatedFooterHeight,
     enableDynamicSizing,
     animatedContentHeight,
+    animatedContentHeightMap,
+    animatedContentHeightMapRef
   } = useBottomSheetInternal();
   //#endregion
 
@@ -52,10 +55,17 @@ function BottomSheetViewComponent({
     animatedScrollableContentOffsetY.value = 0;
     animatedScrollableType.value = SCROLLABLE_TYPE.VIEW;
   }, [animatedScrollableContentOffsetY, animatedScrollableType]);
+
   const handleLayout = useCallback(
     (event: LayoutChangeEvent) => {
       if (enableDynamicSizing) {
-        animatedContentHeight.value = event.nativeEvent.layout.height;
+        if (name) {
+          animatedContentHeightMapRef.current = {
+            ...animatedContentHeightMapRef.current,
+            [name]: event.nativeEvent.layout.height
+          }
+          animatedContentHeightMap.value =  animatedContentHeightMapRef.current
+        }
       }
 
       if (onLayout) {
@@ -70,7 +80,7 @@ function BottomSheetViewComponent({
         },
       });
     },
-    [onLayout, animatedContentHeight, enableDynamicSizing]
+    [onLayout, animatedContentHeight, enableDynamicSizing, name]
   );
   //#endregion
 

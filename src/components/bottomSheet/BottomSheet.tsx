@@ -5,6 +5,7 @@ import React, {
   useImperativeHandle,
   memo,
   useEffect,
+  useRef,
 } from 'react';
 import { Platform } from 'react-native';
 import invariant from 'invariant';
@@ -205,7 +206,23 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
       _providedHandleHeight ?? INITIAL_HANDLE_HEIGHT
     );
     const animatedFooterHeight = useSharedValue(0);
-    const animatedContentHeight = useSharedValue(INITIAL_CONTAINER_HEIGHT);
+
+    const _ContentNameList = useMemo(() => {
+      const _Content = typeof Content === 'function' ? <Content /> : Content;
+      return  (Array.isArray(_Content) ? _Content: [_Content]).map(item => item.props?.name);
+    }, [Content]);
+
+    const animatedContentHeightMap = useSharedValue<{[id: string]: number}>({})
+    const animatedContentHeightMapRef = useRef<{[id: string]: number}>({})
+    const animatedContentHeight = useDerivedValue(() => {
+      let result = 0;
+      for (let name of _ContentNameList) {
+        if (name === undefined) continue
+        result += animatedContentHeightMap.value[name] || 0
+      }
+      return result
+    }, [_ContentNameList]);
+    // const animatedContentHeight = useSharedValue(INITIAL_CONTAINER_HEIGHT);
     const animatedSnapPoints = useNormalizedSnapPoints(
       _providedSnapPoints,
       animatedContainerHeight,
@@ -340,7 +357,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
       const extendedPositionWithKeyboard = Math.max(
         0,
         animatedContainerHeight.value -
-          (animatedSheetHeight.value + keyboardHeightInContainer)
+        (animatedSheetHeight.value + keyboardHeightInContainer)
       );
 
       // detect if keyboard is open and the sheet is in temporary position
@@ -491,11 +508,11 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
 
       const currentIndex = isLayoutCalculated.value
         ? interpolate(
-            animatedPosition.value,
-            adjustedSnapPoints,
-            adjustedSnapPointsIndexes,
-            Extrapolate.CLAMP
-          )
+          animatedPosition.value,
+          adjustedSnapPoints,
+          adjustedSnapPointsIndexes,
+          Extrapolate.CLAMP
+        )
         : -1;
 
       /**
@@ -1093,6 +1110,8 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
         animatedIndex,
         animatedPosition,
         animatedContentHeight,
+        animatedContentHeightMap,
+        animatedContentHeightMapRef,
         animatedClosedPosition,
         animatedHandleHeight,
         animatedFooterHeight,
@@ -1121,6 +1140,8 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
         animatedIndex,
         animatedPosition,
         animatedContentHeight,
+        animatedContentHeightMap,
+        animatedContentHeightMapRef,
         animatedScrollableType,
         animatedContentGestureState,
         animatedHandleGestureState,

@@ -1,4 +1,4 @@
-import { createContext, RefObject } from 'react';
+import {createContext, MutableRefObject, RefObject} from 'react';
 import type {
   PanGestureHandlerProps,
   State,
@@ -19,14 +19,14 @@ import type { Scrollable, ScrollableRef } from '../types';
 
 export interface BottomSheetInternalContextType
   extends Pick<
-      PanGestureHandlerProps,
-      | 'activeOffsetY'
-      | 'activeOffsetX'
-      | 'failOffsetY'
-      | 'failOffsetX'
-      | 'waitFor'
-      | 'simultaneousHandlers'
-    >,
+    PanGestureHandlerProps,
+    | 'activeOffsetY'
+    | 'activeOffsetX'
+    | 'failOffsetY'
+    | 'failOffsetX'
+    | 'waitFor'
+    | 'simultaneousHandlers'
+  >,
     Required<
       Pick<
         BottomSheetProps,
@@ -51,6 +51,8 @@ export interface BottomSheetInternalContextType
   animatedIndex: Animated.SharedValue<number>;
   animatedContainerHeight: Animated.SharedValue<number>;
   animatedContentHeight: Animated.SharedValue<number>;
+  animatedContentHeightMap: Animated.SharedValue<{[id: string]: number}>;
+  animatedContentHeightMapRef: MutableRefObject<{[id: string]: number}>;
   animatedHighestSnapPoint: Animated.SharedValue<number>;
   animatedClosedPosition: Animated.SharedValue<number>;
   animatedFooterHeight: Animated.SharedValue<number>;

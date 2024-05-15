@@ -21,4 +21,6 @@ export interface BottomSheetViewProps extends RNViewProps {
   focusHook?: (effect: EffectCallback, deps?: DependencyList) => void;
 
   children: ReactNode[] | ReactNode;
+
+  name?: string;
 }
