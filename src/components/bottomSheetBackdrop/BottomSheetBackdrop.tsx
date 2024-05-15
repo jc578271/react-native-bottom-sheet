@@ -114,14 +114,15 @@ const BottomSheetBackdropComponent = ({
 
   if (isCustomAnimatedIndex) {
     useAnimatedReaction(() => ({
-      _curIndex: animatedCurrentIndex.value,
-      _nextIndex: animatedNextPositionIndex.value
-    })
-    , _cur => {
-      const {_curIndex, _nextIndex} = _cur
-      const _val = _nextIndex === -Infinity ? _curIndex : _nextIndex
-      customAnimatedIndex.value = withTiming(_val, {duration: customAnimatedDuration})
-    }, [customAnimatedDuration])
+        _curIndex: animatedCurrentIndex.value,
+        // _nextIndex: animatedNextPositionIndex.value
+      })
+      , (_cur) => {
+        const {_curIndex,} = _cur
+
+        const _val = animatedNextPositionIndex.value === -Infinity?_curIndex : animatedNextPositionIndex.value;
+        customAnimatedIndex.value = withTiming(_val, {duration: customAnimatedDuration})
+      }, [customAnimatedDuration])
   }
 
   const _animatedIndex = useDerivedValue(() => {
