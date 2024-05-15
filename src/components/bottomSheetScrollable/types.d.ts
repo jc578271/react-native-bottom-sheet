@@ -47,8 +47,6 @@ export interface BottomSheetScrollableProps {
    * @default useScrollEventsHandlersDefault
    */
   scrollEventsHandlersHook?: ScrollEventsHandlersHookType;
-
-  name?: string;
 }
 
 export type ScrollableProps<T> =

@@ -51,8 +51,8 @@ export interface BottomSheetInternalContextType
   animatedIndex: Animated.SharedValue<number>;
   animatedContainerHeight: Animated.SharedValue<number>;
   animatedContentHeight: Animated.SharedValue<number>;
-  animatedContentHeightMap: Animated.SharedValue<{[id: string]: number}>;
-  animatedContentHeightMapRef: MutableRefObject<{[id: string]: number}>;
+  animatedContentHeightMap: Animated.SharedValue<{[route: string]: {[name: string]: number}}>;
+  animatedContentHeightMapRef: MutableRefObject<{[route: string]: {[name: string]: number}}>;
   animatedHighestSnapPoint: Animated.SharedValue<number>;
   animatedClosedPosition: Animated.SharedValue<number>;
   animatedFooterHeight: Animated.SharedValue<number>;
@@ -72,6 +72,7 @@ export interface BottomSheetInternalContextType
   animateToPosition: AnimateToPositionType;
   setScrollableRef: (ref: ScrollableRef) => void;
   removeScrollableRef: (ref: RefObject<Scrollable>) => void;
+  routeKey: string;
 }
 
 export const BottomSheetInternalContext =

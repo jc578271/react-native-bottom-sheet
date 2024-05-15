@@ -177,6 +177,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
         _providedAccessibilityLabel = DEFAULT_ACCESSIBILITY_LABEL,
       accessibilityRole:
         _providedAccessibilityRole = DEFAULT_ACCESSIBILITY_ROLE,
+      routeKey = 'undefined',
     } = props;
     //#endregion
 
@@ -207,37 +208,15 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
     );
     const animatedFooterHeight = useSharedValue(0);
 
-    const _ContentNameList = useMemo(() => {
-      const _Content: React.ReactNode = (typeof Content === 'function' ? <Content /> : Content) as unknown as React.ReactNode;
-      const _ConvertedContent = Array.isArray(_Content) ? _Content : [_Content]
-
-      const result = [];
-      for (let child of _ConvertedContent) {
-        if (!child.props?.name && !!child.props?.children) {
-          const convertedChildren: React.ReactNode[] = Array.isArray(child.props?.children)
-            ? child.props?.children
-            : [child.props?.children]
-          for (let _child of convertedChildren) {
-            result.push(_child.props?.name)
-          }
-          return  result
-        }
-        result.push(child.props?.name)
-      }
-      return result
-    }, [Content]);
-
-    const animatedContentHeightMap = useSharedValue<{[id: string]: number}>({})
-    const animatedContentHeightMapRef = useRef<{[id: string]: number}>({})
+    const animatedContentHeightMap = useSharedValue<{[id: string]: {[id: string]: number}}>({})
+    const animatedContentHeightMapRef = useRef<{[id: string]: {[id: string]: number}}>({})
     const animatedContentHeight = useDerivedValue(() => {
       let result = 0;
-      // console.log(_ContentNameList)
-      for (let name of _ContentNameList) {
-        if (name === undefined) continue
-        result += animatedContentHeightMap.value[name] || 0
+      for (let height of animatedContentHeightMap.value[routeKey]) {
+        result += height
       }
       return result
-    }, [_ContentNameList]);
+    }, [routeKey]);
     // const animatedContentHeight = useSharedValue(INITIAL_CONTAINER_HEIGHT);
     const animatedSnapPoints = useNormalizedSnapPoints(
       _providedSnapPoints,
@@ -1151,6 +1130,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
         stopAnimation,
         setScrollableRef,
         removeScrollableRef,
+        routeKey,
       }),
       [
         animatedIndex,
@@ -1194,6 +1174,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
         removeScrollableRef,
         animateToPosition,
         stopAnimation,
+        routeKey,
       ]
     );
     const externalContextVariables = useMemo(

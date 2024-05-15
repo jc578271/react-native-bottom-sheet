@@ -43,7 +43,6 @@ export function createBottomSheetScrollableComponent<T, P>(
       onScrollBeginDrag,
       onScrollEndDrag,
       onContentSizeChange,
-      name = 'no_name_list',
       ...rest
     }: any = props;
 
@@ -67,7 +66,8 @@ export function createBottomSheetScrollableComponent<T, P>(
       animatedContentHeight,
       enableDynamicSizing,
       animatedContentHeightMap,
-      animatedContentHeightMapRef
+      animatedContentHeightMapRef,
+      routeKey,
     } = useBottomSheetInternal();
     //#endregion
 
@@ -89,13 +89,16 @@ export function createBottomSheetScrollableComponent<T, P>(
       (contentWidth: number, contentHeight: number) => {
         if (enableDynamicSizing) {
           // animatedContentHeight.value = contentHeight;
-          if (name) {
+          // if (name) {
             animatedContentHeightMapRef.current = {
               ...animatedContentHeightMapRef.current,
-              [name]: contentHeight
+              [routeKey]: {
+                ...animatedContentHeightMapRef.current[routeKey],
+                ['list']: contentHeight
+              }
             }
             animatedContentHeightMap.value = animatedContentHeightMapRef.current
-          }
+          // }
         }
 
         if (onContentSizeChange) {

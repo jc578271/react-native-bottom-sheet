@@ -23,7 +23,8 @@ function BottomSheetViewComponent({
     enableDynamicSizing,
     animatedContentHeight,
     animatedContentHeightMap,
-    animatedContentHeightMapRef
+    animatedContentHeightMapRef,
+    routeKey,
   } = useBottomSheetInternal();
   //#endregion
 
@@ -62,7 +63,10 @@ function BottomSheetViewComponent({
         if (name) {
           animatedContentHeightMapRef.current = {
             ...animatedContentHeightMapRef.current,
-            [name]: event.nativeEvent.layout.height
+            [routeKey]: {
+              ...animatedContentHeightMapRef.current[routeKey],
+              [name]: event.nativeEvent.layout.height
+            }
           }
           animatedContentHeightMap.value =  animatedContentHeightMapRef.current
         }

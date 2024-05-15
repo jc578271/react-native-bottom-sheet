@@ -320,6 +320,7 @@ export interface BottomSheetProps
    */
   $modal?: boolean;
   //#endregion
+  routeKey?: string;
 }
 
 export interface BottomSheetAnimationConfigs {
