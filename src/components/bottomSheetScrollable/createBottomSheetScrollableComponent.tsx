@@ -43,7 +43,7 @@ export function createBottomSheetScrollableComponent<T, P>(
       onScrollBeginDrag,
       onScrollEndDrag,
       onContentSizeChange,
-      name = 'no_name',
+      name = 'no_name_list',
       ...rest
     }: any = props;
 

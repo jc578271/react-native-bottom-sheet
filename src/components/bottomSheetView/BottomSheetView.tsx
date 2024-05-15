@@ -12,7 +12,7 @@ function BottomSheetViewComponent({
   onLayout,
   style,
   children,
-  name = 'no_name_list',
+  name = 'no_name_view',
   ...rest
 }: BottomSheetViewProps) {
   //#region hooks
