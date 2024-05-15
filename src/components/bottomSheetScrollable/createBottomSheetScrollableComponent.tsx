@@ -1,5 +1,5 @@
-import React, { forwardRef, useImperativeHandle, useMemo, useRef } from 'react';
-import { Platform } from 'react-native';
+import React, {forwardRef, useEffect, useImperativeHandle, useMemo, useRef} from 'react';
+import {LayoutChangeEvent, Platform } from 'react-native';
 import { useAnimatedProps, useAnimatedStyle } from 'react-native-reanimated';
 import { NativeViewGestureHandler } from 'react-native-gesture-handler';
 import BottomSheetDraggableView from '../bottomSheetDraggableView';
@@ -43,6 +43,7 @@ export function createBottomSheetScrollableComponent<T, P>(
       onScrollBeginDrag,
       onScrollEndDrag,
       onContentSizeChange,
+      estimatedListHeight,
       ...rest
     }: any = props;
 
@@ -90,6 +91,7 @@ export function createBottomSheetScrollableComponent<T, P>(
         if (enableDynamicSizing) {
           // animatedContentHeight.value = contentHeight;
           // if (name) {
+          if (animatedContentHeightMapRef.current[routeKey]?.['list'] < contentHeight) {
             animatedContentHeightMapRef.current = {
               ...animatedContentHeightMapRef.current,
               [routeKey]: {
@@ -98,6 +100,7 @@ export function createBottomSheetScrollableComponent<T, P>(
               }
             }
             animatedContentHeightMap.value = animatedContentHeightMapRef.current
+          }
           // }
         }
 
@@ -106,6 +109,20 @@ export function createBottomSheetScrollableComponent<T, P>(
         }
       }
     );
+
+    useEffect(() => {
+      if (estimatedListHeight) {
+        animatedContentHeightMapRef.current = {
+          ...animatedContentHeightMapRef.current,
+          [routeKey]: {
+            ...animatedContentHeightMapRef.current[routeKey],
+            ['list']: estimatedListHeight
+          }
+        }
+        animatedContentHeightMap.value = animatedContentHeightMapRef.current
+      }
+
+    }, [estimatedListHeight, routeKey]);
     //#endregion
 
     //#region styles
