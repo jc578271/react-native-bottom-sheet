@@ -36,6 +36,7 @@ import {
 } from './constants';
 import { styles } from './styles';
 import type { BottomSheetDefaultBackdropProps } from './types';
+import {useKeyboard} from "../../hooks";
 
 const BottomSheetBackdropComponent = ({
   animatedIndex,
@@ -112,15 +113,24 @@ const BottomSheetBackdropComponent = ({
 
   const customAnimatedIndex = useSharedValue(-1)
 
+
   if (isCustomAnimatedIndex) {
+    const {state: animatedKeyboardState, shouldHandleKeyboardEvents} = useKeyboard()
+    useEffect(() => {
+      shouldHandleKeyboardEvents.value = true
+    }, []);
+
     useAnimatedReaction(() => ({
         _curIndex: animatedCurrentIndex.value,
-        // _nextIndex: animatedNextPositionIndex.value
+        _nextIndex: animatedNextPositionIndex.value,
+        animatedKeyboardState: animatedKeyboardState.value,
       })
       , (_cur) => {
-        const {_curIndex,} = _cur
+        const {_curIndex,_nextIndex, animatedKeyboardState} = _cur
 
-        const _val = animatedNextPositionIndex.value === -Infinity?_curIndex : animatedNextPositionIndex.value;
+        const _val = _nextIndex === -Infinity || animatedKeyboardState == 1
+          ? _curIndex
+          : _nextIndex;
         customAnimatedIndex.value = withTiming(_val, {duration: customAnimatedDuration})
       }, [customAnimatedDuration])
   }
