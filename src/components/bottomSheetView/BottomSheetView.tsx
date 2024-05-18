@@ -89,7 +89,7 @@ function BottomSheetViewComponent({
   //#endregion
 
   // effects
-  useFocusHook(handleSettingScrollable);
+  // useFocusHook(handleSettingScrollable);
 
   //render
   return (
