@@ -1,6 +1,7 @@
 import type React from 'react';
-import type { BottomSheetProps } from '../bottomSheet';
+import type { View } from 'react-native';
 import type { MODAL_STACK_BEHAVIOR } from '../../constants';
+import type { BottomSheetProps } from '../bottomSheet';
 
 export interface BottomSheetModalPrivateMethods {
   dismiss: (force?: boolean) => void;
@@ -15,16 +16,17 @@ export interface BottomSheetModalProps
   /**
    * Modal name to help identify the modal for later on.
    * @type string
-   * @default nanoid generated unique key.
+   * @default generated unique key.
    */
   name?: string;
 
   /**
    * Defines the stack behavior when modal mount.
-   * - `push` it will mount the modal on top of current modal.
-   * - `replace` it will minimize the current modal then mount the modal.
-   * @type `push` | `replace`
-   * @default replace
+   * - `push` it will mount the modal on top of the current one.
+   * - `switch` it will minimize the current modal then mount the new one.
+   * - `replace` it will dismiss the current modal then mount the new one.
+   * @type `push` | `switch` | `replace`
+   * @default switch
    */
   stackBehavior?: BottomSheetModalStackBehavior;
 
@@ -41,7 +43,7 @@ export interface BottomSheetModalProps
    * @type React.ComponentType
    * @default undefined
    */
-  containerComponent?: React.ComponentType<React.PropsWithChildren<{}>>;
+  containerComponent?: React.ComponentType<React.PropsWithChildren>;
 
   // callbacks
   /**
@@ -54,8 +56,5 @@ export interface BottomSheetModalProps
    * A scrollable node or normal view.
    * @type React.ReactNode[] | React.ReactNode | (({ data: any }?) => React.ReactElement)
    */
-  children:
-    | (({ data: any }?) => React.ReactElement)
-    | React.ReactNode[]
-    | React.ReactNode;
+  children: React.FC<{ data?: never }> | React.ReactNode[] | React.ReactNode;
 }

@@ -1,29 +1,34 @@
-import React, {forwardRef, useEffect, useImperativeHandle, useMemo, useRef} from 'react';
-import {LayoutChangeEvent, Platform } from 'react-native';
+import React, {
+  forwardRef,
+  useContext,
+  useImperativeHandle,
+  useMemo,
+  useEffect,
+} from 'react';
+import { Gesture } from 'react-native-gesture-handler';
 import { useAnimatedProps, useAnimatedStyle } from 'react-native-reanimated';
-import { NativeViewGestureHandler } from 'react-native-gesture-handler';
-import BottomSheetDraggableView from '../bottomSheetDraggableView';
-import BottomSheetRefreshControl from '../bottomSheetRefreshControl';
 import {
-  useScrollHandler,
-  useScrollableSetter,
-  useBottomSheetInternal,
-  useStableCallback,
-} from '../../hooks';
-import {
-  GESTURE_SOURCE,
   SCROLLABLE_DECELERATION_RATE_MAPPER,
   SCROLLABLE_STATE,
-  SCROLLABLE_TYPE,
+  type SCROLLABLE_TYPE,
 } from '../../constants';
-import { styles } from './styles';
+import { BottomSheetDraggableContext } from '../../contexts/gesture';
+import {
+  useBottomSheetInternal,
+  useScrollHandler,
+  useScrollableSetter,
+  useStableCallback,
+} from '../../hooks';
+import { ScrollableContainer } from './ScrollableContainer';
+import { useBottomSheetContentSizeSetter } from './useBottomSheetContentSizeSetter';
 
 export function createBottomSheetScrollableComponent<T, P>(
   type: SCROLLABLE_TYPE,
+  // biome-ignore lint: to be addressed!
   ScrollableComponent: any
 ) {
   return forwardRef<T, P>((props, ref) => {
-    // props
+    //#region props
     const {
       // hooks
       focusHook,
@@ -43,16 +48,13 @@ export function createBottomSheetScrollableComponent<T, P>(
       onScrollBeginDrag,
       onScrollEndDrag,
       onContentSizeChange,
-      estimatedListHeight,
       ...rest
+      // biome-ignore lint: to be addressed!
     }: any = props;
-
-    //#region refs
-    const nativeGestureRef = useRef<NativeViewGestureHandler>(null);
-    const refreshControlGestureRef = useRef<NativeViewGestureHandler>(null);
     //#endregion
 
     //#region hooks
+    const draggableGesture = useContext(BottomSheetDraggableContext);
     const { scrollableRef, scrollableContentOffsetY, scrollHandler } =
       useScrollHandler(
         scrollEventsHandlersHook,
@@ -61,16 +63,21 @@ export function createBottomSheetScrollableComponent<T, P>(
         onScrollEndDrag
       );
     const {
-      enableContentPanningGesture,
       animatedFooterHeight,
       animatedScrollableState,
+      enableContentPanningGesture,
       animatedContentHeight,
       enableDynamicSizing,
       animatedContentHeightMap,
       animatedContentHeightMapRef,
       routeKey,
     } = useBottomSheetInternal();
+    const { setContentSize } = useBottomSheetContentSizeSetter();
     //#endregion
+
+    if (!draggableGesture && enableContentPanningGesture) {
+      throw "'Scrollable' cannot be used out of the BottomSheet!";
+    }
 
     //#region variables
     const scrollableAnimatedProps = useAnimatedProps(
@@ -81,16 +88,28 @@ export function createBottomSheetScrollableComponent<T, P>(
           ? animatedScrollableState.value === SCROLLABLE_STATE.UNLOCKED
           : showsVerticalScrollIndicator,
       }),
-      [showsVerticalScrollIndicator]
+      [animatedScrollableState, showsVerticalScrollIndicator]
+    );
+
+    const scrollableGesture = useMemo(
+      () =>
+        draggableGesture
+          ? Gesture.Native()
+              // @ts-ignore
+              .simultaneousWithExternalGesture(draggableGesture)
+              .shouldCancelWhenOutside(false)
+          : undefined,
+      [draggableGesture]
     );
     //#endregion
 
     //#region callbacks
     const handleContentSizeChange = useStableCallback(
       (contentWidth: number, contentHeight: number) => {
+        setContentSize(contentHeight);
+
         if (enableDynamicSizing) {
           // animatedContentHeight.value = contentHeight;
-          // if (name) {
           if ((animatedContentHeightMapRef.current[routeKey]?.['list'] || 0) < contentHeight) {
             animatedContentHeightMapRef.current = {
               ...animatedContentHeightMapRef.current,
@@ -101,7 +120,6 @@ export function createBottomSheetScrollableComponent<T, P>(
             }
             animatedContentHeightMap.value = animatedContentHeightMapRef.current
           }
-          // }
         }
 
         if (onContentSizeChange) {
@@ -132,14 +150,14 @@ export function createBottomSheetScrollableComponent<T, P>(
           ? animatedFooterHeight.value
           : 0,
       }),
-      [enableFooterMarginAdjustment]
+      [animatedFooterHeight, enableFooterMarginAdjustment]
     );
     const containerStyle = useMemo(() => {
       return enableFooterMarginAdjustment
         ? [
-          ...(style ? ('length' in style ? style : [style]) : []),
-          containerAnimatedStyle,
-        ]
+            ...(style ? ('length' in style ? style : [style]) : []),
+            containerAnimatedStyle,
+          ]
         : style;
     }, [enableFooterMarginAdjustment, style, containerAnimatedStyle]);
     //#endregion
@@ -157,77 +175,25 @@ export function createBottomSheetScrollableComponent<T, P>(
     //#endregion
 
     //#region render
-    if (Platform.OS === 'android') {
-      const scrollableContent = (
-        <NativeViewGestureHandler
-          ref={nativeGestureRef}
-          enabled={enableContentPanningGesture}
-          shouldCancelWhenOutside={false}
-        >
-          <ScrollableComponent
-            animatedProps={scrollableAnimatedProps}
-            {...rest}
-            scrollEventThrottle={16}
-            ref={scrollableRef}
-            overScrollMode={overScrollMode}
-            keyboardDismissMode={keyboardDismissMode}
-            onScroll={scrollHandler}
-            onContentSizeChange={handleContentSizeChange}
-            style={containerStyle}
-          />
-        </NativeViewGestureHandler>
-      );
-      return (
-        <BottomSheetDraggableView
-          nativeGestureRef={nativeGestureRef}
-          refreshControlGestureRef={refreshControlGestureRef}
-          gestureType={GESTURE_SOURCE.SCROLLABLE}
-          style={styles.container}
-        >
-          {onRefresh ? (
-            <BottomSheetRefreshControl
-              ref={refreshControlGestureRef}
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              progressViewOffset={progressViewOffset}
-              style={styles.container}
-            >
-              {scrollableContent}
-            </BottomSheetRefreshControl>
-          ) : (
-            scrollableContent
-          )}
-        </BottomSheetDraggableView>
-      );
-    }
     return (
-      <BottomSheetDraggableView
-        nativeGestureRef={nativeGestureRef}
-        gestureType={GESTURE_SOURCE.SCROLLABLE}
-        style={styles.container}
-      >
-        <NativeViewGestureHandler
-          ref={nativeGestureRef}
-          enabled={enableContentPanningGesture}
-          shouldCancelWhenOutside={false}
-        >
-          <ScrollableComponent
-            animatedProps={scrollableAnimatedProps}
-            {...rest}
-            scrollEventThrottle={16}
-            ref={scrollableRef}
-            overScrollMode={overScrollMode}
-            keyboardDismissMode={keyboardDismissMode}
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            progressViewOffset={progressViewOffset}
-            refreshControl={refreshControl}
-            onScroll={scrollHandler}
-            onContentSizeChange={handleContentSizeChange}
-            style={containerStyle}
-          />
-        </NativeViewGestureHandler>
-      </BottomSheetDraggableView>
+      <ScrollableContainer
+        ref={scrollableRef}
+        nativeGesture={scrollableGesture}
+        animatedProps={scrollableAnimatedProps}
+        overScrollMode={overScrollMode}
+        keyboardDismissMode={keyboardDismissMode}
+        refreshing={refreshing}
+        scrollEventThrottle={16}
+        progressViewOffset={progressViewOffset}
+        style={containerStyle}
+        onRefresh={onRefresh}
+        onScroll={scrollHandler}
+        onContentSizeChange={handleContentSizeChange}
+        setContentSize={setContentSize}
+        ScrollableComponent={ScrollableComponent}
+        refreshControl={refreshControl}
+        {...rest}
+      />
     );
     //#endregion
   });

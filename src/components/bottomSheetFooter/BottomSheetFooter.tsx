@@ -1,10 +1,10 @@
 import React, { memo, useCallback, useMemo } from 'react';
-import { LayoutChangeEvent } from 'react-native';
+import type { LayoutChangeEvent } from 'react-native';
 import Animated, { SharedValue, useAnimatedStyle } from 'react-native-reanimated';
 import { KEYBOARD_STATE } from '../../constants';
 import { useBottomSheetInternal } from '../../hooks';
-import type { BottomSheetDefaultFooterProps } from './types';
 import { styles } from './styles';
+import type { BottomSheetDefaultFooterProps } from './types';
 
 const getRawValue = (value: number | SharedValue<number>) => {
   "worklet";
@@ -61,12 +61,8 @@ function BottomSheetFooterComponent({
   //#endregion
 
   return children !== null ? (
-    <Animated.View
-      pointerEvents="box-none"
-      onLayout={handleContainerLayout}
-      style={containerStyle}
-    >
-      {typeof children === 'function' ? children() : children}
+    <Animated.View onLayout={handleContainerLayout} style={containerStyle}>
+      {children}
     </Animated.View>
   ) : null;
 }

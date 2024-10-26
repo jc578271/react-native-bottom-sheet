@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import {
   Keyboard,
-  KeyboardEvent,
-  KeyboardEventEasing,
-  KeyboardEventName,
+  type KeyboardEvent,
+  type KeyboardEventEasing,
+  type KeyboardEventName,
   Platform,
 } from 'react-native';
 import {
@@ -37,12 +37,18 @@ export const useKeyboard = () => {
   const keyboardAnimationEasing =
     useSharedValue<KeyboardEventEasing>('keyboard');
   const keyboardAnimationDuration = useSharedValue(500);
-  const temporaryCachedKeyboardEvent = useSharedValue<any>([]);
+  // biome-ignore lint: to be addressed!
+  const temporaryCachedKeyboardEvent = useSharedValue<any[]>([]);
   //#endregion
 
   //#region worklets
   const handleKeyboardEvent = useWorkletCallback(
-    (state, height, duration, easing) => {
+    (
+      state: KEYBOARD_STATE,
+      height: number,
+      duration: number,
+      easing: KeyboardEventEasing
+    ) => {
       if (state === KEYBOARD_STATE.SHOWN && !shouldHandleKeyboardEvents.value) {
         /**
          * if the keyboard event was fired before the `onFocus` on TextInput,
@@ -56,8 +62,8 @@ export const useKeyboard = () => {
         state === KEYBOARD_STATE.SHOWN
           ? height
           : height === 0
-          ? keyboardHeight.value
-          : height;
+            ? keyboardHeight.value
+            : height;
       keyboardAnimationDuration.value = duration;
       keyboardAnimationEasing.value = easing;
       keyboardState.value = state;
@@ -114,7 +120,8 @@ export const useKeyboard = () => {
       if (result && params.length > 0) {
         handleKeyboardEvent(params[0], params[1], params[2], params[3]);
       }
-    }
+    },
+    []
   );
   //#endregion
 

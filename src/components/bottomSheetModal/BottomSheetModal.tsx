@@ -1,29 +1,34 @@
+import { Portal, usePortal } from '@gorhom/portal';
 import React, {
   forwardRef,
   memo,
+  type RefObject,
   useCallback,
   useImperativeHandle,
   useMemo,
   useRef,
   useState,
 } from 'react';
-import { Portal, usePortal } from '@gorhom/portal';
-import BottomSheet from '../bottomSheet';
+import type { SNAP_POINT_TYPE } from '../../constants';
 import { useBottomSheetModalInternal } from '../../hooks';
+import type { BottomSheetMethods, BottomSheetModalMethods } from '../../types';
 import { print } from '../../utilities';
-import {
-  DEFAULT_STACK_BEHAVIOR,
-  DEFAULT_ENABLE_DISMISS_ON_CLOSE,
-} from './constants';
-import type { BottomSheetModalMethods, BottomSheetMethods } from '../../types';
-import type { BottomSheetModalProps } from './types';
 import { id } from '../../utilities/id';
+import BottomSheet from '../bottomSheet';
+import {
+  DEFAULT_ENABLE_DISMISS_ON_CLOSE,
+  DEFAULT_STACK_BEHAVIOR,
+} from './constants';
+import type {
+  BottomSheetModalPrivateMethods,
+  BottomSheetModalProps,
+} from './types';
 
 type BottomSheetModal = BottomSheetModalMethods;
 
 const INITIAL_STATE: {
   mount: boolean;
-  data: any;
+  data?: never;
 } = {
   mount: false,
   data: undefined,
@@ -39,6 +44,7 @@ const BottomSheetModalComponent = forwardRef<
     stackBehavior = DEFAULT_STACK_BEHAVIOR,
     enableDismissOnClose = DEFAULT_ENABLE_DISMISS_ON_CLOSE,
     onDismiss: _providedOnDismiss,
+    onAnimate: _providedOnAnimate,
 
     // bottom sheet props
     index = 0,
@@ -73,6 +79,7 @@ const BottomSheetModalComponent = forwardRef<
   //#region refs
   const bottomSheetRef = useRef<BottomSheet>(null);
   const currentIndexRef = useRef(!animateOnMount ? index : -1);
+  const nextIndexRef = useRef<number | null>(null);
   const restoreIndexRef = useRef(-1);
   const minimized = useRef(false);
   const forcedDismissed = useRef(false);
@@ -85,6 +92,7 @@ const BottomSheetModalComponent = forwardRef<
   //#endregion
 
   //#region private methods
+  // biome-ignore lint/correctness/useExhaustiveDependencies(BottomSheetModal.name): used for debug only
   const resetVariables = useCallback(function resetVariables() {
     print({
       component: BottomSheetModal.name,
@@ -96,12 +104,15 @@ const BottomSheetModalComponent = forwardRef<
     mounted.current = false;
     forcedDismissed.current = false;
   }, []);
+  // biome-ignore lint/correctness/useExhaustiveDependencies(BottomSheetModal.name): used for debug only
   const unmount = useCallback(
     function unmount() {
-      print({
-        component: BottomSheetModal.name,
-        method: unmount.name,
-      });
+      if (__DEV__) {
+        print({
+          component: BottomSheetModal.name,
+          method: unmount.name,
+        });
+      }
       const _mounted = mounted.current;
 
       // reset variables
@@ -143,13 +154,13 @@ const BottomSheetModalComponent = forwardRef<
     }
     bottomSheetRef.current?.snapToPosition(...args);
   }, []);
-  const handleExpand = useCallback<BottomSheetMethods['expand']>((...args) => {
+  const handleExpand: BottomSheetMethods['expand'] = useCallback((...args) => {
     if (minimized.current) {
       return;
     }
     bottomSheetRef.current?.expand(...args);
   }, []);
-  const handleCollapse = useCallback<BottomSheetMethods['collapse']>(
+  const handleCollapse: BottomSheetMethods['collapse'] = useCallback(
     (...args) => {
       if (minimized.current) {
         return;
@@ -158,13 +169,13 @@ const BottomSheetModalComponent = forwardRef<
     },
     []
   );
-  const handleClose = useCallback<BottomSheetMethods['close']>((...args) => {
+  const handleClose: BottomSheetMethods['close'] = useCallback((...args) => {
     if (minimized.current) {
       return;
     }
     bottomSheetRef.current?.close(...args);
   }, []);
-  const handleForceClose = useCallback<BottomSheetMethods['forceClose']>(
+  const handleForceClose: BottomSheetMethods['forceClose'] = useCallback(
     (...args) => {
       if (minimized.current) {
         return;
@@ -176,44 +187,67 @@ const BottomSheetModalComponent = forwardRef<
   //#endregion
 
   //#region bottom sheet modal methods
+  // biome-ignore lint/correctness/useExhaustiveDependencies(BottomSheetModal.name): used for debug only
+  // biome-ignore lint/correctness/useExhaustiveDependencies(ref): ref is a stable object
   const handlePresent = useCallback(
-    function handlePresent(_data?: any) {
+    function handlePresent(_data?: never) {
       requestAnimationFrame(() => {
         setState({
           mount: true,
           data: _data,
         });
-        mountSheet(key, ref, stackBehavior);
+        mountSheet(
+          key,
+          ref as unknown as RefObject<BottomSheetModalPrivateMethods>,
+          stackBehavior
+        );
+        ref;
 
-        print({
-          component: BottomSheetModal.name,
-          method: handlePresent.name,
-        });
+        if (__DEV__) {
+          print({
+            component: BottomSheetModal.name,
+            method: handlePresent.name,
+          });
+        }
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [key, stackBehavior, mountSheet]
   );
+  // biome-ignore lint/correctness/useExhaustiveDependencies(BottomSheetModal.name): used for debug only
   const handleDismiss = useCallback<BottomSheetModalMethods['dismiss']>(
     function handleDismiss(animationConfigs) {
-      print({
-        component: BottomSheetModal.name,
-        method: handleDismiss.name,
-        params: {
-          currentIndexRef: currentIndexRef.current,
-          minimized: minimized.current,
-        },
-      });
+      if (__DEV__) {
+        print({
+          component: BottomSheetModal.name,
+          method: handleDismiss.name,
+          params: {
+            currentIndexRef: currentIndexRef.current,
+            minimized: minimized.current,
+          },
+        });
+      }
+
+      const animating = nextIndexRef.current != null;
+
       /**
-       * if modal is already been dismiss, we exit the method.
+       * early exit, if not minimized, it is in closed position and not animating
        */
-      if (currentIndexRef.current === -1 && minimized.current === false) {
+      if (
+        currentIndexRef.current === -1 &&
+        minimized.current === false &&
+        !animating
+      ) {
         return;
       }
 
+      /**
+       * unmount and early exit, if minimized or it is in closed position and not animating
+       */
       if (
-        minimized.current ||
-        (currentIndexRef.current === -1 && enablePanDownToClose)
+        !animating &&
+        (minimized.current ||
+          (currentIndexRef.current === -1 && enablePanDownToClose))
       ) {
         unmount();
         return;
@@ -224,15 +258,18 @@ const BottomSheetModalComponent = forwardRef<
     },
     [willUnmountSheet, unmount, key, enablePanDownToClose]
   );
+  // biome-ignore lint/correctness/useExhaustiveDependencies(BottomSheetModal.name): used for debug only
   const handleMinimize = useCallback(
     function handleMinimize() {
-      print({
-        component: BottomSheetModal.name,
-        method: handleMinimize.name,
-        params: {
-          minimized: minimized.current,
-        },
-      });
+      if (__DEV__) {
+        print({
+          component: BottomSheetModal.name,
+          method: handleMinimize.name,
+          params: {
+            minimized: minimized.current,
+          },
+        });
+      }
       if (minimized.current) {
         return;
       }
@@ -252,15 +289,18 @@ const BottomSheetModalComponent = forwardRef<
     },
     [index]
   );
+  // biome-ignore lint/correctness/useExhaustiveDependencies(BottomSheetModal.name): used for debug only
   const handleRestore = useCallback(function handleRestore() {
-    print({
-      component: BottomSheetModal.name,
-      method: handleRestore.name,
-      params: {
-        minimized: minimized.current,
-        forcedDismissed: forcedDismissed.current,
-      },
-    });
+    if (__DEV__) {
+      print({
+        component: BottomSheetModal.name,
+        method: handleRestore.name,
+        params: {
+          minimized: minimized.current,
+          forcedDismissed: forcedDismissed.current,
+        },
+      });
+    }
     if (!minimized.current || forcedDismissed.current) {
       return;
     }
@@ -270,16 +310,19 @@ const BottomSheetModalComponent = forwardRef<
   //#endregion
 
   //#region callbacks
+  // biome-ignore lint/correctness/useExhaustiveDependencies(BottomSheetModal.name): used for debug only
   const handlePortalOnUnmount = useCallback(
     function handlePortalOnUnmount() {
-      print({
-        component: BottomSheetModal.name,
-        method: handlePortalOnUnmount.name,
-        params: {
-          minimized: minimized.current,
-          forcedDismissed: forcedDismissed.current,
-        },
-      });
+      if (__DEV__) {
+        print({
+          component: BottomSheetModal.name,
+          method: handlePortalOnUnmount.name,
+          params: {
+            minimized: minimized.current,
+            forcedDismissed: forcedDismissed.current,
+          },
+        });
+      }
       /**
        * if modal is already been dismiss, we exit the method.
        */
@@ -305,36 +348,58 @@ const BottomSheetModalComponent = forwardRef<
     if (mounted.current) {
       render();
     }
-  },
-  []);
+  }, []);
+  // biome-ignore lint/correctness/useExhaustiveDependencies(BottomSheetModal.name): used for debug only
   const handleBottomSheetOnChange = useCallback(
-    function handleBottomSheetOnChange(_index: number) {
-      print({
-        component: BottomSheetModal.name,
-        method: handleBottomSheetOnChange.name,
-        params: {
-          minimized: minimized.current,
-          forcedDismissed: forcedDismissed.current,
-        },
-      });
+    function handleBottomSheetOnChange(
+      _index: number,
+      _position: number,
+      _type: SNAP_POINT_TYPE
+    ) {
+      if (__DEV__) {
+        print({
+          component: BottomSheetModal.name,
+          method: handleBottomSheetOnChange.name,
+          category: 'callback',
+          params: {
+            minimized: minimized.current,
+            forcedDismissed: forcedDismissed.current,
+          },
+        });
+      }
       currentIndexRef.current = _index;
+      nextIndexRef.current = null;
 
       if (_providedOnChange) {
-        _providedOnChange(_index);
+        _providedOnChange(_index, _position, _type);
       }
     },
     [_providedOnChange]
   );
+  const handleBottomSheetOnAnimate = useCallback(
+    (fromIndex: number, toIndex: number) => {
+      nextIndexRef.current = toIndex;
+
+      if (_providedOnAnimate) {
+        _providedOnAnimate(fromIndex, toIndex);
+      }
+    },
+    [_providedOnAnimate]
+  );
+  // biome-ignore lint/correctness/useExhaustiveDependencies(BottomSheetModal.name): used for debug only
   const handleBottomSheetOnClose = useCallback(
     function handleBottomSheetOnClose() {
-      print({
-        component: BottomSheetModal.name,
-        method: handleBottomSheetOnClose.name,
-        params: {
-          minimized: minimized.current,
-          forcedDismissed: forcedDismissed.current,
-        },
-      });
+      if (__DEV__) {
+        print({
+          component: BottomSheetModal.name,
+          method: handleBottomSheetOnClose.name,
+          category: 'callback',
+          params: {
+            minimized: minimized.current,
+            forcedDismissed: forcedDismissed.current,
+          },
+        });
+      }
 
       if (minimized.current) {
         return;
@@ -367,7 +432,6 @@ const BottomSheetModalComponent = forwardRef<
   //#endregion
 
   // render
-  // console.log('BottomSheetModal', index, mount, data);
   return mount ? (
     <Portal
       key={key}
@@ -389,11 +453,11 @@ const BottomSheetModalComponent = forwardRef<
           containerOffset={containerOffset}
           onChange={handleBottomSheetOnChange}
           onClose={handleBottomSheetOnClose}
-          children={
-            typeof Content === 'function' ? <Content data={data} /> : Content
-          }
+          onAnimate={handleBottomSheetOnAnimate}
           $modal={true}
-        />
+        >
+          {typeof Content === 'function' ? <Content data={data} /> : Content}
+        </BottomSheet>
       </ContainerComponent>
     </Portal>
   ) : null;
