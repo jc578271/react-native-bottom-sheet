@@ -29,10 +29,6 @@ import {
   DEFAULT_ENABLE_TOUCH_THROUGH,
   DEFAULT_OPACITY,
   DEFAULT_PRESS_BEHAVIOR,
-  DEFAULT_ACCESSIBLE,
-  DEFAULT_ACCESSIBILITY_ROLE,
-  DEFAULT_ACCESSIBILITY_LABEL,
-  DEFAULT_ACCESSIBILITY_HINT,
 } from './constants';
 import { styles } from './styles';
 import type { BottomSheetDefaultBackdropProps } from './types';

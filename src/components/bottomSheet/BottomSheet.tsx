@@ -83,10 +83,6 @@ import {
   INITIAL_POSITION,
   INITIAL_SNAP_POINT,
   INITIAL_VALUE,
-  DEFAULT_DYNAMIC_SIZING,
-  DEFAULT_ACCESSIBLE,
-  DEFAULT_ACCESSIBILITY_LABEL,
-  DEFAULT_ACCESSIBILITY_ROLE
 } from './constants';
 import { styles } from './styles';
 import type { AnimateToPositionType, BottomSheetProps } from './types';
