@@ -9,7 +9,6 @@ import React, {
   useRef,
 } from 'react';
 import { Platform } from 'react-native';
-import { State } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedReaction,
   useSharedValue,
