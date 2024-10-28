@@ -17,7 +17,7 @@ export function useBottomSheetContentSizeSetter() {
       if (!enableDynamicSizing) {
         return;
       }
-      animatedContentHeight.value = contentHeight;
+      // animatedContentHeight.value = contentHeight;
     },
     [enableDynamicSizing, animatedContentHeight]
   );

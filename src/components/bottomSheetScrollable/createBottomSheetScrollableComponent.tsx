@@ -4,6 +4,7 @@ import React, {
   useImperativeHandle,
   useMemo,
   useEffect,
+  useRef,
 } from 'react';
 import { Gesture } from 'react-native-gesture-handler';
 import { useAnimatedProps, useAnimatedStyle } from 'react-native-reanimated';
@@ -48,6 +49,7 @@ export function createBottomSheetScrollableComponent<T, P>(
       onScrollBeginDrag,
       onScrollEndDrag,
       onContentSizeChange,
+      estimatedListHeight,
       ...rest
       // biome-ignore lint: to be addressed!
     }: any = props;
@@ -66,7 +68,7 @@ export function createBottomSheetScrollableComponent<T, P>(
       animatedFooterHeight,
       animatedScrollableState,
       enableContentPanningGesture,
-      animatedContentHeight,
+      // animatedContentHeight,
       enableDynamicSizing,
       animatedContentHeightMap,
       animatedContentHeightMapRef,
@@ -103,6 +105,7 @@ export function createBottomSheetScrollableComponent<T, P>(
     );
     //#endregion
 
+    const mounted = useRef(false)
     //#region callbacks
     const handleContentSizeChange = useStableCallback(
       (contentWidth: number, contentHeight: number) => {
@@ -110,7 +113,7 @@ export function createBottomSheetScrollableComponent<T, P>(
 
         if (enableDynamicSizing) {
           // animatedContentHeight.value = contentHeight;
-          if ((animatedContentHeightMapRef.current[routeKey]?.['list'] || 0) < contentHeight) {
+          if (mounted.current && (animatedContentHeightMapRef.current[routeKey]?.['list'] || 0) < contentHeight) {
             animatedContentHeightMapRef.current = {
               ...animatedContentHeightMapRef.current,
               [routeKey]: {
@@ -138,6 +141,7 @@ export function createBottomSheetScrollableComponent<T, P>(
           }
         }
         animatedContentHeightMap.value = animatedContentHeightMapRef.current
+        mounted.current = true;
       }
 
     }, [estimatedListHeight, routeKey]);
