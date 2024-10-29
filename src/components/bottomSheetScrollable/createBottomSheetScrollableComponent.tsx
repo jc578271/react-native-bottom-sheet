@@ -105,7 +105,7 @@ export function createBottomSheetScrollableComponent<T, P>(
     );
     //#endregion
 
-    const mounted = useRef(false)
+    const mounted = useRef(!estimatedListHeight)
     //#region callbacks
     const handleContentSizeChange = useStableCallback(
       (contentWidth: number, contentHeight: number) => {
