@@ -62,14 +62,16 @@ function BottomSheetViewComponent({
 
   const handleLayout = useCallback(
     (event: LayoutChangeEvent) => {
-      if (enableDynamicSizing && name) {
+      if (enableDynamicSizing) {
         runOnUI((height: number) => {
           "worklet";
-          animatedContentHeightMap.value = {
-            ...animatedContentHeightMap.value,
-            [routeKey]: {
-              ...animatedContentHeightMap.value[routeKey],
-              [name]: height
+          if (name) {
+            animatedContentHeightMap.value = {
+              ...animatedContentHeightMap.value,
+              [routeKey]: {
+                ...animatedContentHeightMap.value[routeKey],
+                [name]: height
+              }
             }
           }
         })(event.nativeEvent.layout.height)
