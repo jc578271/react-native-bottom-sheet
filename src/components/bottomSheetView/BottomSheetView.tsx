@@ -5,7 +5,7 @@ import {
   type ViewStyle,
   View,
 } from 'react-native';
-import Animated, { useAnimatedStyle } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, runOnUI } from 'react-native-reanimated';
 import { SCROLLABLE_TYPE } from '../../constants';
 import { useBottomSheetInternal } from '../../hooks';
 import { print } from '../../utilities';
@@ -28,7 +28,6 @@ function BottomSheetViewComponent({
     enableDynamicSizing,
     animatedContentHeight,
     animatedContentHeightMap,
-    animatedContentHeightMapRef,
     routeKey,
   } = useBottomSheetInternal();
   //#endregion
@@ -63,17 +62,17 @@ function BottomSheetViewComponent({
 
   const handleLayout = useCallback(
     (event: LayoutChangeEvent) => {
-      if (enableDynamicSizing) {
-        if (name) {
-          animatedContentHeightMapRef.current = {
-            ...animatedContentHeightMapRef.current,
+      if (enableDynamicSizing && name) {
+        runOnUI((height: number) => {
+          "worklet";
+          animatedContentHeightMap.value = {
+            ...animatedContentHeightMap.value,
             [routeKey]: {
-              ...animatedContentHeightMapRef.current[routeKey],
-              [name]: event.nativeEvent.layout.height
+              ...animatedContentHeightMap.value[routeKey],
+              [name]: height
             }
           }
-          animatedContentHeightMap.value =  animatedContentHeightMapRef.current
-        }
+        })(event.nativeEvent.layout.height)
       }
 
       if (onLayout) {
@@ -91,7 +90,7 @@ function BottomSheetViewComponent({
         });
       }
     },
-    [onLayout, animatedContentHeight, enableDynamicSizing]
+    [onLayout, animatedContentHeight, enableDynamicSizing, name]
   );
   //#endregion
 

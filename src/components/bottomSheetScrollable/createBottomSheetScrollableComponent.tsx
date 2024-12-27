@@ -7,7 +7,7 @@ import React, {
   useRef,
 } from 'react';
 import { Gesture } from 'react-native-gesture-handler';
-import { useAnimatedProps, useAnimatedStyle } from 'react-native-reanimated';
+import { useAnimatedProps, useAnimatedStyle, runOnUI, useSharedValue } from 'react-native-reanimated';
 import {
   SCROLLABLE_DECELERATION_RATE_MAPPER,
   SCROLLABLE_STATE,
@@ -71,7 +71,6 @@ export function createBottomSheetScrollableComponent<T, P>(
       // animatedContentHeight,
       enableDynamicSizing,
       animatedContentHeightMap,
-      animatedContentHeightMapRef,
       routeKey,
     } = useBottomSheetInternal();
     const { setContentSize } = useBottomSheetContentSizeSetter();
@@ -105,24 +104,27 @@ export function createBottomSheetScrollableComponent<T, P>(
     );
     //#endregion
 
-    const mounted = useRef(!estimatedListHeight)
+    const mounted = useSharedValue(!estimatedListHeight)
     //#region callbacks
     const handleContentSizeChange = useStableCallback(
       (contentWidth: number, contentHeight: number) => {
         setContentSize(contentHeight);
 
         if (enableDynamicSizing) {
-          // animatedContentHeight.value = contentHeight;
-          if (mounted.current && (animatedContentHeightMapRef.current[routeKey]?.['list'] || 0) < contentHeight) {
-            animatedContentHeightMapRef.current = {
-              ...animatedContentHeightMapRef.current,
-              [routeKey]: {
-                ...animatedContentHeightMapRef.current[routeKey],
-                ['list']: contentHeight
+          runOnUI(() => {
+            "worklet";
+            // animatedContentHeight.value = contentHeight;
+            const aHeight = animatedContentHeightMap.value[routeKey]?.['list'] || 0
+            if (mounted.value && contentHeight - aHeight > 10) {
+              animatedContentHeightMap.value = {
+                ...animatedContentHeightMap.value,
+                [routeKey]: {
+                  ...animatedContentHeightMap.value[routeKey],
+                  ['list']: contentHeight
+                }
               }
             }
-            animatedContentHeightMap.value = animatedContentHeightMapRef.current
-          }
+          })()
         }
 
         if (onContentSizeChange) {
@@ -132,19 +134,20 @@ export function createBottomSheetScrollableComponent<T, P>(
     );
 
     useEffect(() => {
-      if (estimatedListHeight) {
-        animatedContentHeightMapRef.current = {
-          ...animatedContentHeightMapRef.current,
-          [routeKey]: {
-            ...animatedContentHeightMapRef.current[routeKey],
-            ['list']: estimatedListHeight
+      if (estimatedListHeight && enableDynamicSizing) {
+        runOnUI(() => {
+          "worklet"
+          animatedContentHeightMap.value = {
+            ...animatedContentHeightMap.value,
+            [routeKey]: {
+              ...animatedContentHeightMap.value[routeKey],
+              ['list']: estimatedListHeight
+            }
           }
-        }
-        animatedContentHeightMap.value = animatedContentHeightMapRef.current
-        mounted.current = true;
+          mounted.value = true;
+        })()
       }
-
-    }, [estimatedListHeight, routeKey]);
+    }, [estimatedListHeight, routeKey, enableDynamicSizing]);
     //#endregion
 
     //#region styles
