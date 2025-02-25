@@ -122,9 +122,13 @@ const BottomSheetBackdropComponent = ({
       , (_cur) => {
         const {_curIndex,_nextIndex, animatedKeyboardState} = _cur
 
+        if (animatedKeyboardState == 1 && _curIndex == -1) return;
+        if (animatedKeyboardState == 2 && _nextIndex == -1) return;
+
         const _val = _nextIndex === -Infinity || animatedKeyboardState == 1
           ? _curIndex
           : _nextIndex;
+
         customAnimatedIndex.value = withTiming(_val, {duration: customAnimatedDuration})
       }, [customAnimatedDuration])
   }
