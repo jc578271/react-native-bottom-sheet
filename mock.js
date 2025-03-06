@@ -12,7 +12,7 @@ const React = require('react');
 const ReactNative = require('react-native');
 
 const NOOP = () => {};
-const NOOP_VALUE = { value: 0 };
+const NOOP_VALUE = { value: 0, set: NOOP, get: () => 0 };
 
 const BottomSheetModalProvider = ({ children }) => {
   return children;
@@ -109,6 +109,7 @@ module.exports = {
   BottomSheetScrollView: ReactNative.ScrollView,
   BottomSheetSectionList: ReactNative.SectionList,
   BottomSheetFlatList: ReactNative.FlatList,
+  BottomSheetFlashList: ReactNative.FlatList,
   BottomSheetVirtualizedList: ReactNative.VirtualizedList,
 
   TouchableOpacity: ReactNative.TouchableOpacity,

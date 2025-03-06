@@ -1,5 +1,42 @@
 
 
+## [5.1.1](https://github.com/gorhom/react-native-bottom-sheet/compare/v5.1.0...v5.1.1) (2025-02-09)
+
+
+### Bug Fixes
+
+* **#2043:** handle unnecessary invocation of index side effect ([#2073](https://github.com/gorhom/react-native-bottom-sheet/issues/2073))(inspired by @IslamRustamov) ([2164c02](https://github.com/gorhom/react-native-bottom-sheet/commit/2164c02e63177f9ac69acc05722c85e8d55cd931)), closes [#2043](https://github.com/gorhom/react-native-bottom-sheet/issues/2043)
+
+# [5.1.0](https://github.com/gorhom/react-native-bottom-sheet/compare/v5.0.6...v5.1.0) (2025-02-06)
+
+
+### Bug Fixes
+
+* **#2129:** fixed initial isAnimatedOnMount value ([0850cb8](https://github.com/gorhom/react-native-bottom-sheet/commit/0850cb864819f79189592cb66c2b6d179957ba61))
+
+
+### Features
+
+* added enableBlurKeyboardOnGesture prop to handle blurring keyboard on gesture ([1c31aca](https://github.com/gorhom/react-native-bottom-sheet/commit/1c31acad50a7c171548ea7f4594a4d1d563cf40f))
+
+## [5.0.6](https://github.com/gorhom/react-native-bottom-sheet/compare/v5.0.5...v5.0.6) (2024-11-17)
+
+
+### Bug Fixes
+
+* clipped views when keyboard is closing ([2320a81](https://github.com/gorhom/react-native-bottom-sheet/commit/2320a81f95e696e22debe5a823740f51fadae0f6))
+* removed keyboard height setting from hide event ([61473b5](https://github.com/gorhom/react-native-bottom-sheet/commit/61473b56c3389e5ac9edfeb1dc4b93907e3b5d05))
+* updated useStableCallback to set callback in ref without useEffect ([#2010](https://github.com/gorhom/react-native-bottom-sheet/issues/2010))(by [@pavel-krasnov](https://github.com/pavel-krasnov)) ([e898859](https://github.com/gorhom/react-native-bottom-sheet/commit/e89885936391f5ce106983d8aac814bcb422e82c))
+* useStableCallback implementation ([87a73c5](https://github.com/gorhom/react-native-bottom-sheet/commit/87a73c59b83ef0b3868c12403a467ea3aebf0dd5))
+
+## [5.0.5](https://github.com/gorhom/react-native-bottom-sheet/compare/v5.0.4...v5.0.5) (2024-10-26)
+
+
+### Bug Fixes
+
+* **#1983:** updated shared values access as hook dependancies ([#1992](https://github.com/gorhom/react-native-bottom-sheet/issues/1992))(by [@pinpong](https://github.com/pinpong)) ([9757bd2](https://github.com/gorhom/react-native-bottom-sheet/commit/9757bd251cba67cf26489640f20fd1557b1a426e)), closes [#1983](https://github.com/gorhom/react-native-bottom-sheet/issues/1983) [#1983](https://github.com/gorhom/react-native-bottom-sheet/issues/1983)
+* added BottomSheetFlashList mock ([#1988](https://github.com/gorhom/react-native-bottom-sheet/issues/1988))(by @Fadikk367) ([13c7d47](https://github.com/gorhom/react-native-bottom-sheet/commit/13c7d47beae6f2451968d30e862f0ea49b7199b6))
+
 ## [5.0.4](https://github.com/gorhom/react-native-bottom-sheet/compare/v5.0.3...v5.0.4) (2024-10-20)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "@gorhom/bottom-sheet",
-  "version": "5.0.4",
+  "version": "5.1.1",
   "description": "A performant interactive bottom sheet with fully configurable options 🚀",
   "main": "src/index.ts",
   "react-native": "src/index.ts",
@@ -43,17 +43,17 @@
     "@commitlint/config-conventional": "^17.6.5",
     "@release-it/conventional-changelog": "^8.0.1",
     "@types/invariant": "^2.2.34",
-    "@types/react": "18.2.45",
-    "@types/react-native": "0.73.0",
+    "@types/react": "~18.3.12",
+    "@types/react-native": "~0.73.0",
     "copyfiles": "^2.4.1",
     "husky": "^4.3.8",
     "lint-staged": "^13.2.2",
     "metro-react-native-babel-preset": "^0.77.0",
-    "react": "18.2.0",
-    "react-native": "0.73.4",
-    "react-native-builder-bob": "^0.23.2",
-    "react-native-gesture-handler": "^2.16.1",
-    "react-native-reanimated": "^3.10.1",
+    "react": "18.3.1",
+    "react-native": "0.76.0",
+    "react-native-builder-bob": "^0.30.3",
+    "react-native-gesture-handler": "~2.20.2",
+    "react-native-reanimated": "~3.16.1",
     "release-it": "^17.6.0",
     "typescript": "^5.3.0"
   },
@@ -63,7 +63,7 @@
     "react": "*",
     "react-native": "*",
     "react-native-gesture-handler": ">=2.16.1",
-    "react-native-reanimated": ">=3.10.1"
+    "react-native-reanimated": ">=3.16.0"
   },
   "peerDependenciesMeta": {
     "@types/react-native": {
