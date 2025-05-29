@@ -429,7 +429,7 @@ function BottomSheetModalComponent<T = any>(
     // internal
     minimize: handleMinimize,
     restore: handleRestore,
-  }));
+  } as any));
   //#endregion
 
   // render
