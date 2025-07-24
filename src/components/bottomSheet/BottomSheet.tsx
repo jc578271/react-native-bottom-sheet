@@ -8,7 +8,7 @@ import React, {
   useEffect,
   useRef,
 } from 'react';
-import { type Insets, Platform } from 'react-native';
+import { Dimensions, type Insets, Platform } from 'react-native';
 import { State } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedReaction,
@@ -141,7 +141,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
       containerOffset: _providedContainerOffset,
       topInset = 0,
       bottomInset = 0,
-      maxDynamicContentSize,
+      maxDynamicContentSize = Dimensions.get('window').height * 0.93,
 
       // animated callback shared values
       animatedPosition: _providedAnimatedPosition,
